@@ -190,7 +190,7 @@ def administrador(request):
 from django.shortcuts import render
 from django.http import JsonResponse
 from base.models import Contacto, EjecucionRPA
-from base.scripts.linkedin_bot import procesar_contactos
+#from base.scripts.linkedin_bot import procesar_contactos
 import datetime
 
 # 🖥️ Vista del Dashboard
@@ -442,7 +442,7 @@ def vista_campanas(request):
 
 from django.shortcuts import render, redirect
 from base.models import Campana, Contacto
-from base.scripts.linkedin_bot import procesar_contactos_con_lista
+#from base.scripts.linkedin_bot import procesar_contactos_con_lista
 
 from django.shortcuts import render
 from base.models import Campana, Contacto
