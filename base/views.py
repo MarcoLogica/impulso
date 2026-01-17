@@ -446,7 +446,7 @@ from base.scripts.linkedin_bot import procesar_contactos_con_lista
 
 from django.shortcuts import render
 from base.models import Campana, Contacto
-from base.scripts.linkedin_bot import procesar_contactos_con_lista  # Asegúrate que esté bien escrito
+#from base.scripts.linkedin_bot import procesar_contactos_con_lista  # Asegúrate que esté bien escrito
 
 def ejecutar_campana(request):
     mensaje = None
