@@ -205,7 +205,7 @@ def dashboard(request):
 # 🚀 Función para ejecutar el RPA
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from base.scripts.linkedin_bot import procesar_contactos
+# from base.scripts.linkedin_bot import procesar_contactos
 
 @csrf_exempt  # Solo para pruebas
 def ejecutar_rpa(request):
