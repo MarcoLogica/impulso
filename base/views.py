@@ -190,7 +190,7 @@ def administrador(request):
 from django.shortcuts import render
 from django.http import JsonResponse
 from base.models import Contacto, EjecucionRPA
-#from base.scripts.linkedin_bot import procesar_contactos
+# from base.scripts.linkedin_bot import procesar_contactos
 import datetime
 
 # 🖥️ Vista del Dashboard
@@ -205,7 +205,6 @@ def dashboard(request):
 # 🚀 Función para ejecutar el RPA
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-# from base.scripts.linkedin_bot import procesar_contactos
 
 @csrf_exempt  # Solo para pruebas
 def ejecutar_rpa(request):
@@ -442,11 +441,9 @@ def vista_campanas(request):
 
 from django.shortcuts import render, redirect
 from base.models import Campana, Contacto
-#from base.scripts.linkedin_bot import procesar_contactos_con_lista
 
 from django.shortcuts import render
 from base.models import Campana, Contacto
-#from base.scripts.linkedin_bot import procesar_contactos_con_lista  # Asegúrate que esté bien escrito
 
 def ejecutar_campana(request):
     mensaje = None
