@@ -6,6 +6,11 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from datetime import datetime
 from base.models import Contacto
+import os
+from django.conf import settings
+
+if not settings.DEBUG:
+    raise RuntimeError("linkedin_bot no puede ejecutarse en producción")
 
 
 # 📝 Función para buscar un contacto y enviar un mensaje
