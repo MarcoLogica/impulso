@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gestión de Atributos a Revisar</title>
+</head>
+<body>
+    <h1>Gestión de Atributos a Revisar</h1>
+    <h2>Agregar Nuevo</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+    </form>
+    <h2>Lista de Atributos a Revisar</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for atributo in atributos %}
+            <tr>
+                <td>{{ atributo.nombre }}</td>
+                <td>{{ atributo.descripcion }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

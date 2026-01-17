@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Seguimiento del Proceso</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eef2f5;
+      padding: 40px;
+    }
+
+    .cabecera {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .cabecera h2 {
+      color: #2c3e50;
+      font-size: 1.6em;
+    }
+
+    .cabecera p {
+      color: #555;
+      font-size: 0.95em;
+    }
+
+    .timeline {
+      position: relative;
+      margin: 40px 0;
+      padding-left: 30px;
+      border-left: 2px solid #3498db;
+    }
+
+    .hito {
+      margin-bottom: 30px;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .hito::before {
+      content: '🔵';
+      position: absolute;
+      left: -28px;
+      top: -2px;
+      font-size: 1.2em;
+    }
+
+    .hito .tipo {
+      font-weight: bold;
+      color: #34495e;
+      font-size: 1em;
+    }
+
+    .hito .fecha {
+      font-size: 0.85em;
+      color: #666;
+    }
+
+    .hito .comentario {
+      font-style: italic;
+      color: #555;
+      margin-top: 6px;
+    }
+
+    .hito .editar {
+      margin-top: 8px;
+    }
+
+    .hito .editar a {
+      font-size: 0.85em;
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    .hito .editar a:hover {
+      text-decoration: underline;
+      color: #2980b9;
+    }
+
+    .botones {
+      text-align: center;
+      margin-top: 50px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .boton {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.9em;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      transition: background-color 0.2s;
+      min-width: 160px;
+      text-align: center;
+    }
+
+    .boton:hover {
+      background-color: #2980b9;
+    }
+
+    .cerrar {
+      background-color: #e67e22;
+    }
+
+    .cerrar:hover {
+      background-color: #d35400;
+    }
+
+    .volver {
+      background-color: #7f8c8d;
+    }
+
+    .volver:hover {
+      background-color: #626d70;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cabecera">
+    <h2>📊 Seguimiento para {{ proceso.empresa }} — {{ proceso.cargo }}</h2>
+    <p>Inicio del proceso: {{ proceso.fecha_ingreso }}</p>
+    <p>Estado: {% if proceso.estado == 'activo' %}🟢 Activo{% else %}⚪ Finalizado{% endif %}</p>
+  </div>
+
+  <div class="timeline">
+    {% for hito in proceso.hitos.all %}
+      <div class="hito">
+        <div class="tipo">{{ hito.get_tipo_display }}</div>
+        <div class="fecha">📅 {{ hito.fecha }}</div>
+        {% if hito.comentario %}
+          <div class="comentario">💬 {{ hito.comentario }}</div>
+        {% endif %}
+        <div class="editar">
+          <a href="{% url 'editar_hito' hito.id %}">✏️ Editar hito</a>
+        </div>
+      </div>
+    {% empty %}
+      <p style="text-align:center;">Aún no hay hitos registrados para este proceso.</p>
+    {% endfor %}
+  </div>
+
+  <div class="botones">
+    <a href="{% url 'agregar_hito' proceso.id %}" class="boton">➕ Agregar hito</a>
+    {% if proceso.estado == 'activo' %}
+      <a href="{% url 'cerrar_proceso' proceso.id %}" class="boton cerrar">🔒 Cerrar proceso</a>
+    {% endif %}
+    <a href="{% url 'lista_procesos' %}" class="boton volver">← Volver a mis procesos</a>
+  </div>
+
+</body>
+</html>

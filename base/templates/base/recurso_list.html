@@ -1,0 +1,29 @@
+{% extends 'base/base_generic.html' %}
+
+{% block content %}
+  <h2>Recursos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Nombre</th>
+        <th>Costo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for recurso in recurso %}
+        <tr>
+          <td>{{ recurso.tipo }}</td>
+          <td>{{ recurso.nombre }}</td>
+          <td>{{ recurso.costo }}</td>
+          <td>
+            <a href="{% url 'recurso_update' recurso.pk %}">Editar</a> |
+            <a href="{% url 'recurso_delete' recurso.pk %}">Eliminar</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{% url 'recurso_create' %}">Agregar Recurso</a>
+{% endblock %}

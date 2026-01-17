@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear nueva tarea</title>
+</head>
+<body>
+  <h2>📌 Nueva tarea para "{{ iniciativa.nombre }}"</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar tarea</button>
+  </form>
+
+  <a href="{% url 'vista_plan' iniciativa.id %}">⬅️ Volver al plan</a>
+</body>
+</html>

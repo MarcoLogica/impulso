@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de usuario - IMPULSO</title>
+  {% load static %}
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f8fa;
+            padding: 40px;
+        }
+        .registro-container {
+            max-width: 460px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .alert {
+            background-color: #fce4e4;
+            border: 1px solid #e74c3c;
+            padding: 10px;
+            border-radius: 6px;
+            color: #c0392b;
+            margin-bottom: 20px;
+        }
+        .link-login {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="registro-container">
+        <h2>✍️ Registro en IMPULSO</h2>
+
+        {% if form.errors %}
+        <div class="alert" role="alert">
+            <strong>⚠️ Por favor revisa los siguientes errores:</strong>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            <small>{{ form.username.help_text }}</small>
+
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+            <small>{{ form.password1.help_text }}</small>
+
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+            <small>{{ form.password2.help_text }}</small>
+
+            <button type="submit" class="btn-primary">🚀 Crear cuenta</button>
+        </form>
+
+        <div class="link-login">
+            ¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>
+        </div>
+    </div>
+</body>
+</html>

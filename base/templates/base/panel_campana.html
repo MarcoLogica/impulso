@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>📊 Panel de Métricas — {{ campana.nombre }}</title>
+  <style>
+    body {
+      background-color: #e6f7fb;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
+    }
+
+    .encabezado {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .encabezado h2 {
+      font-size: 2em;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .encabezado p {
+      color: #555;
+      margin: 4px 0;
+    }
+
+    .kpi-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 50px;
+    }
+
+    .kpi {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 22px;
+      width: 230px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .kpi:hover {
+      transform: translateY(-4px);
+    }
+
+    .kpi h3 {
+      font-size: 1em;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .kpi .valor {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #3498db;
+    }
+
+    .boton-volver {
+      display: inline-block;
+      background-color: #95a5a6;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .boton-volver:hover {
+      background-color: #7f8c8d;
+    }
+
+    .acciones {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="encabezado">
+    <h2>📊 Panel de Métricas</h2>
+    <p><strong>Campaña:</strong> {{ campana.nombre }}</p>
+    <p><strong>Industria:</strong> {{ campana.industria }} | <strong>Cargo objetivo:</strong> {{ campana.cargo }}</p>
+    <p><strong>Fecha de creación:</strong> {{ campana.fecha_creacion|date:"d M Y" }} |
+       <strong>Estado:</strong> {% if campana.activa %}🟢 Activa{% else %}⚪ Inactiva{% endif %}</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <h3>📬 Envíos totales</h3>
+      <div class="valor">{{ total_envios }}</div>
+    </div>
+    <div class="kpi">
+      <h3>✅ Enviados con éxito</h3>
+      <div class="valor">{{ enviados_ok }}</div>
+    </div>
+    <div class="kpi">
+      <h3>❌ Errores</h3>
+      <div class="valor">{{ errores }}</div>
+    </div>
+    <div class="kpi">
+      <h3>🎯 % Éxito</h3>
+      <div class="valor">{{ porcentaje_exito }}%</div>
+    </div>
+    <div class="kpi">
+      <h3>👥 Contactos únicos</h3>
+      <div class="valor">{{ contactos_unicos }}</div>
+    </div>
+    <div class="kpi">
+      <h3>📅 Primer envío</h3>
+      <div class="valor">
+        {% if fecha_primera_envio %}{{ fecha_primera_envio|date:"d M Y" }}{% else %}—{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width: 600px; margin: 40px auto;">
+  <h3 style="color: #2c3e50; text-align: center; margin-bottom: 10px;">
+    Progreso de envío de mensajes
+  </h3>
+  <div style="
+    background-color: #ecf0f1;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 28px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  ">
+    <div style="
+      height: 100%;
+      width: {{ porcentaje_exito }}%;
+      background: linear-gradient(to right, #2ecc71, #27ae60);
+      text-align: center;
+      color: white;
+      font-weight: bold;
+      line-height: 28px;
+      transition: width 0.3s ease;
+    ">
+      {{ porcentaje_exito }}%
+    </div>
+  </div>
+</div>
+
+  <div class="acciones">
+    <a href="{% url 'vista_campanas' %}" class="boton-volver">← Volver a campañas</a>
+  </div>
+
+
+
+</body>
+</html>

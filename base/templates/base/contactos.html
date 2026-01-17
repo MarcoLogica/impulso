@@ -1,0 +1,193 @@
+{% extends "base/estilos.html" %}
+{% block title %}Campañas{% endblock %}
+{% block content %}
+
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Contactos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding: 0rem;
+      background-color: #d9d9dc;
+    }
+    .badge.bg-success {
+      background-color: #28a745 !important;
+    }
+    .badge.bg-secondary {
+      background-color: #6c757d !important;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2 class="mb-4">📇 Contactos</h2>
+
+  <div class="alert alert-info d-flex justify-content-between align-items-center">
+    <div>
+      <strong>Total de contactos:</strong> {{ total }}<br>
+      <strong>Con mensaje enviado:</strong> {{ enviados }}
+    </div>
+
+    <form method="get" action="" class="d-flex mb-3">
+      <input type="text" name="nombre" class="form-control me-2" placeholder="Buscar por nombre" value="{{ nombre_buscado }}">
+      <button type="submit" class="btn btn-primary">🔍 Buscar</button>
+    </form>
+
+    <form method="get" action="">
+      <select name="etapa" onchange="this.form.submit()" class="form-select">
+        <option value="">Todas las etapas</option>
+        <option value="inicial">Mensaje enviado</option>
+        <option value="respondido">Respondió mensaje</option>
+        <option value="reunion_agendada">Reunión agendada</option>
+        <option value="negociacion">En negociación</option>
+        <option value="cerrado">Cerrado</option>
+      </select>
+    </form>
+
+    <ul class="list-group">
+      <li class="list-group-item">📤 Enviados: {{ enviados }}</li>
+      <li class="list-group-item">📬 Respondidos: {{ respondidos }}</li>
+      <li class="list-group-item">📅 Reuniones: {{ reuniones }}</li>
+      <li class="list-group-item">💼 Negociación: {{ negociaciones }}</li>
+      <li class="list-group-item">✅ Cerrados: {{ cerrados }}</li>
+    </ul>
+  </div>
+
+  <form method="post" action="{% url 'eliminar_multiples' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger mt-2">🧹 Eliminar Seleccionados</button>
+    <button id="corregirNombresBtn" type="button" class="btn btn-secondary mt-2">🧹 Corregir nombres del modelo</button>
+
+    <script>
+      document.getElementById("corregirNombresBtn").addEventListener("click", () => {
+        function getCSRFToken() {
+          const cookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
+          return cookie ? cookie.split('=')[1] : '';
+        }
+
+        fetch("/corregir-nombres-modelo/", {
+          method: "POST",
+          headers: { "X-CSRFToken": getCSRFToken() }
+        })
+        .then(res => res.json())
+        .then(data => alert(data.mensaje))
+        .catch(err => alert("Error al corregir nombres: " + err));
+      });
+    </script>
+
+    <div class="mb-3 p-3 border bg-light">
+      <div class="mb-3 p-3 border rounded bg-primary-subtle text-dark">
+        <h5 class="mb-3">🗂 Columnas de la tabla</h5>
+        <div class="row small fw-semibold">
+          <div class="col-md-2">✔ Selección</div>
+          <div class="col-md-2">👤 Nombre</div>
+          <div class="col-md-2">🔗 LinkedIn</div>
+          <div class="col-md-2">📨 Mensaje Enviado</div>
+          <div class="col-md-2">🕒 Fecha de Envío</div>
+          <div class="col-md-2">⚙️ Acciones</div>
+        </div>
+      </div>
+
+      <div style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-hover table-bordered">
+          <thead class="table-dark">
+  <tr>
+    <th><input type="checkbox" id="select-all"></th>
+    <th>Nombre</th>
+    <th>LinkedIn</th>
+    <th>Industria</th>
+    <th>Cargo</th>
+    <th>Estatus de venta</th> <!-- NUEVA COLUMNA -->
+    <th>Mensaje Enviado</th>
+    <th>Fecha de Envío</th>
+    <th>Acciones</th>
+  </tr>
+</thead>
+          <tbody>
+            {% for contacto in contactos %}
+            <tr>
+              <td><input type="checkbox" name="seleccionados" value="{{ contacto.id }}"></td>
+              <td>{{ contacto.nombre }}</td>
+              <td><a href="{{ contacto.linkedin_url }}" target="_blank">🔗 Perfil</a></td>
+              <td>{{ contacto.industria|default:"—" }}</td>
+              <td>{{ contacto.cargo|default:"—" }}</td>
+              <td>
+  {% if contacto.etapa_ventas == 'inicial' %}📤 Mensaje enviado
+  {% elif contacto.etapa_ventas == 'respondido' %}📬 Respondió
+  {% elif contacto.etapa_ventas == 'reunion_agendada' %}📅 Reunión agendada
+  {% elif contacto.etapa_ventas == 'negociacion' %}💼 Negociación
+  {% elif contacto.etapa_ventas == 'cerrado' %}✅ Cerrado
+  {% else %}—{% endif %}
+</td>
+              <td>
+                {% if contacto.mensaje_enviado %}
+                  <span class="badge bg-success">Sí</span>
+                {% else %}
+                  <span class="badge bg-secondary">No</span>
+                {% endif %}
+              </td>
+              <td>{{ contacto.fecha_envio|date:"d/m/Y H:i" }}</td>
+              <td>
+                <a href="{% url 'editar_contacto' contacto.id %}" class="btn btn-sm btn-warning">✏️ Editar</a>
+                <a href="{% url 'eliminar_contacto' contacto.id %}" class="btn btn-sm btn-danger">🗑️ Eliminar</a>
+
+                <!-- Botón que abre el modal -->
+                <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalEstatus{{ contacto.id }}">
+                  🔄 Actualizar estatus
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="modalEstatus{{ contacto.id }}" tabindex="-1" aria-labelledby="modalLabel{{ contacto.id }}" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <form method="post" action="{% url 'actualizar_estatus' contacto.id %}">
+                      {% csrf_token %}
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="modalLabel{{ contacto.id }}">Actualizar estatus de {{ contacto.nombre }}</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                          <select name="etapa_ventas" class="form-select">
+                            <option value="inicial" {% if contacto.etapa_ventas == 'inicial' %}selected{% endif %}>Mensaje enviado</option>
+                            <option value="respondido" {% if contacto.etapa_ventas == 'respondido' %}selected{% endif %}>Respondió mensaje</option>
+                            <option value="reunion_agendada" {% if contacto.etapa_ventas == 'reunion_agendada' %}selected{% endif %}>Reunión agendada</option>
+                            <option value="negociacion" {% if contacto.etapa_ventas == 'negociacion' %}selected{% endif %}>En negociación</option>
+                            <option value="cerrado" {% if contacto.etapa_ventas == 'cerrado' %}selected{% endif %}>Cerrado</option>
+                          </select>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-success">Guardar</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="8" class="text-center">No hay contactos registrados.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.getElementById('select-all').addEventListener('change', function () {
+    const checkboxes = document.querySelectorAll('input[name="seleccionados"]');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+{% endblock content %}

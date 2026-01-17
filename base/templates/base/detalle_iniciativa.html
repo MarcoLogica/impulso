@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle de iniciativa</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f8fa;
+      padding: 40px;
+      color: #2c3e50;
+    }
+    .contenedor {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    .etiqueta {
+      display: inline-block;
+      background-color: #3498db;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      margin-bottom: 15px;
+    }
+    .descripcion {
+      margin-bottom: 25px;
+    }
+    .acciones {
+      margin-top: 30px;
+    }
+    .acciones a {
+      display: inline-block;
+      padding: 10px 18px;
+      margin-right: 10px;
+      border-radius: 6px;
+      background-color: #2ecc71;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .acciones a.editar {
+      background-color: #f39c12;
+    }
+    .acciones a.eliminar {
+      background-color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="contenedor">
+    <h2>🚀 Iniciativa: {{ iniciativa.nombre }}</h2>
+    <span class="etiqueta">{{ iniciativa.estado }}</span>
+
+    <div class="descripcion">
+      <strong>Descripción:</strong><br>
+      <p>{{ iniciativa.descripcion|default:"Sin descripción aún." }}</p>
+
+      <strong>Fecha de creación:</strong> {{ iniciativa.creado_en|date:"d M Y" }}<br>
+      <strong>Última actualización:</strong> {{ iniciativa.actualizado_en|date:"d M Y" }}
+    </div>
+
+    {% if iniciativa.fases.exists %}
+      <h3>📌 Fases asociadas</h3>
+      <ul>
+        {% for fase in iniciativa.fases.all %}
+          <li><strong>{{ fase.nombre }}</strong>: {{ fase.descripcion|truncatewords:12 }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No hay fases aún para esta iniciativa.</p>
+    {% endif %}
+
+    <div class="acciones">
+      <a href="{% url 'vista_plan' iniciativa.id %}">📋 Ver Plan</a>
+      <a href="{% url 'editar_iniciativa' iniciativa.id %}" class="editar">✏️ Editar</a>
+      <a href="{% url 'eliminar_iniciativa' iniciativa.id %}" class="eliminar">🗑️ Eliminar</a>
+    </div>
+  </div>
+
+</body>
+</html>

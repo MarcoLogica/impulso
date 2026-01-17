@@ -1,0 +1,120 @@
+
+<style>
+  /* Contenedor general */
+form {
+  background-color: #fdfdfd;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Título principal */
+h2 {
+  font-weight: 700;
+  color: #28a745;
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Fieldsets */
+fieldset {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  background-color: #ffffff;
+}
+
+legend {
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 0 10px;
+}
+
+/* Etiquetas */
+label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Inputs y textarea */
+input[type="text"],
+input[type="number"],
+input[type="file"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #f8f9fa;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #28a745;
+  outline: none;
+}
+
+/* Botón de envío */
+button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+</style>
+
+<h2>📌 Marcar como completada: {{ tarea.nombre }}</h2>
+
+<form method="post" enctype="multipart/form-data" style="max-width: 700px; margin-top: 20px;">
+  {% csrf_token %}
+
+  <fieldset style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <legend style="font-weight: bold; color: #28a745;">🧠 Hito mental o reflexivo</legend>
+
+    <label>Descripción del hito:</label><br>
+    {{ form.descripcion }}<br><br>
+
+    <label>Documento (opcional):</label><br>
+    {{ form.archivo }}
+  </fieldset>
+
+  <fieldset style="border: 1px solid #ccc; padding: 15px; border-radius: 8px;">
+    <legend style="font-weight: bold; color: #007bff;">🏋️‍♂️ Registro físico</legend>
+
+    <label>Series realizadas:</label><br>
+    {{ form.series }}<br><br>
+
+    <label>Repeticiones por serie:</label><br>
+    {{ form.repeticiones }}<br><br>
+
+    <label>Carga utilizada (kg):</label><br>
+    {{ form.carga }}
+  </fieldset>
+
+  <br>
+  <button type="submit" style="padding: 10px 20px; background-color: #28a745; color: white; font-weight: bold; border: none; border-radius: 5px;">
+    ✅ Confirmar finalización
+  </button>
+</form>

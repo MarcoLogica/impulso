@@ -1,0 +1,55 @@
+{% extends 'base/estilo.html' %}
+{% block content %}
+
+
+<html>
+<div class="contenedor-superior-listas">
+
+    <h1>Gestión de Planes de Inventario</h1>
+
+</div>
+<div class="contenedor-central">
+<body>
+
+<div class="contenedor-form-formularios">
+    <h2>Agregar Nuevo</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+    </form>
+</div>
+    <div class="estilo-tabla">
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Tipo de Inventario</th>
+                <th>Responsable</th>
+                <th>Recursos</th>
+                <th>Fecha de Inicio</th>
+                <th>Fecha de Fin</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plan in planes_inventario %}
+            <tr>
+                <td>{{ plan.nombre }}</td>
+                <td>{{ plan.tipo_inventario.nombre }}</td>
+                <td>{{ plan.responsable.nombre }}</td>
+                <td>
+                    {% for recurso in plan.recursos.all %}
+                        {{ recurso }}<br>
+                    {% endfor %}
+                </td>
+                <td>{{ plan.fecha_inicio }}</td>
+                <td>{{ plan.fecha_fin }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+        </div>
+</body>
+    </div>
+</html>
+{% endblock content %}

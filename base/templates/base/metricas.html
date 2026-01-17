@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>📈 Métricas de la campaña: {{ campaña.nombre }}</h2>
+
+<table class="table table-bordered mt-4">
+  <tr>
+    <th>Total de contactos</th>
+    <td>{{ total }}</td>
+  </tr>
+  <tr>
+    <th>Mensajes enviados</th>
+    <td>{{ enviados }}</td>
+  </tr>
+  <tr>
+    <th>Fallidos (si aplica)</th>
+    <td>{{ fallidos }}</td>
+  </tr>
+  <tr>
+    <th>Progreso</th>
+    <td>{{ progreso }}%</td>
+  </tr>
+</table>
+
+<div class="progress" style="height: 25px;">
+  <div class="progress-bar" role="progressbar" style="width: {{ progreso }}%;" aria-valuenow="{{ progreso }}" aria-valuemin="0" aria-valuemax="100">
+    {{ progreso }}%
+  </div>
+</div>
+
+<a href="{% url 'lista_campañas' %}" class="btn btn-secondary mt-3">← Volver a campañas</a>
+{% endblock %}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Clasificador de Excel</title>
+    <style>
+        .clasificador-container {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        .bloque {
+            width: 100%;
+            max-width: 500px;
+        }
+        h3 {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h2>🔍 Clasificador de Datos Funcionales y Jerárquicos</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ form.archivo_excel.label_tag }} {{ form.archivo_excel }}</p>
+        <p>{{ form.columnas_analizar.label_tag }} {{ form.columnas_analizar }} <small>{{ form.columnas_analizar.help_text }}</small></p>
+
+        <div class="clasificador-container">
+
+            <!-- CLASIFICACIÓN FUNCIONAL -->
+            <div class="bloque">
+                <h3>📂 Clasificación por Sector Funcional</h3>
+
+                <h4>📦 Logística</h4>
+                <p>{{ form.logistica1.label_tag }} {{ form.logistica1 }}</p>
+                <p>{{ form.logistica2.label_tag }} {{ form.logistica2 }}</p>
+                <p>{{ form.logistica3.label_tag }} {{ form.logistica3 }}</p>
+
+                <h4>🧑‍💼 Recursos Humanos</h4>
+                <p>{{ form.rrhh1.label_tag }} {{ form.rrhh1 }}</p>
+                <p>{{ form.rrhh2.label_tag }} {{ form.rrhh2 }}</p>
+                <p>{{ form.rrhh3.label_tag }} {{ form.rrhh3 }}</p>
+
+                <h4>💼 Ventas</h4>
+                <p>{{ form.ventas1.label_tag }} {{ form.ventas1 }}</p>
+                <p>{{ form.ventas2.label_tag }} {{ form.ventas2 }}</p>
+                <p>{{ form.ventas3.label_tag }} {{ form.ventas3 }}</p>
+                <p>{{ form.ventas4.label_tag }} {{ form.ventas4 }}</p>
+
+                <h4>💻 Tecnología</h4>
+                <p>{{ form.tecnologia1.label_tag }} {{ form.tecnologia1 }}</p>
+                <p>{{ form.tecnologia2.label_tag }} {{ form.tecnologia2 }}</p>
+                <p>{{ form.tecnologia3.label_tag }} {{ form.tecnologia3 }}</p>
+
+                <h4>📊 Administración y Finanzas</h4>
+                <p>{{ form.administracion1.label_tag }} {{ form.administracion1 }}</p>
+                <p>{{ form.administracion2.label_tag }} {{ form.administracion2 }}</p>
+                <p>{{ form.administracion3.label_tag }} {{ form.administracion3 }}</p>
+
+                <h4>📥 Abastecimiento y Compras</h4>
+                <p>{{ form.compras1.label_tag }} {{ form.compras1 }}</p>
+                <p>{{ form.compras2.label_tag }} {{ form.compras2 }}</p>
+                <p>{{ form.compras3.label_tag }} {{ form.compras3 }}</p>
+
+                <h4>🏛️ Alta Dirección</h4>
+                <p>{{ form.direccion1.label_tag }} {{ form.direccion1 }}</p>
+                <p>{{ form.direccion2.label_tag }} {{ form.direccion2 }}</p>
+                <p>{{ form.direccion3.label_tag }} {{ form.direccion3 }}</p>
+            </div>
+
+            <!-- CLASIFICACIÓN JERÁRQUICA -->
+            <div class="bloque">
+                <h3>🧭 Clasificación por Responsabilidad Jerárquica</h3>
+
+                <h4>🎓 Director</h4>
+                <p>{{ form.director1.label_tag }} {{ form.director1 }}</p>
+                <p>{{ form.director2.label_tag }} {{ form.director2 }}</p>
+                <p>{{ form.director3.label_tag }} {{ form.director3 }}</p>
+
+                <h4>👔 Gerente</h4>
+                <p>{{ form.gerente1.label_tag }} {{ form.gerente1 }}</p>
+                <p>{{ form.gerente2.label_tag }} {{ form.gerente2 }}</p>
+                <p>{{ form.gerente3.label_tag }} {{ form.gerente3 }}</p>
+
+                <h4>🔰 Jefe</h4>
+                <p>{{ form.jefe1.label_tag }} {{ form.jefe1 }}</p>
+                <p>{{ form.jefe2.label_tag }} {{ form.jefe2 }}</p>
+                <p>{{ form.jefe3.label_tag }} {{ form.jefe3 }}</p>
+
+                <h4>🎯 Supervisor</h4>
+                <p>{{ form.supervisor1.label_tag }} {{ form.supervisor1 }}</p>
+                <p>{{ form.supervisor2.label_tag }} {{ form.supervisor2 }}</p>
+                <p>{{ form.supervisor3.label_tag }} {{ form.supervisor3 }}</p>
+
+                <h4>📎 Junior</h4>
+                <p>{{ form.junior1.label_tag }} {{ form.junior1 }}</p>
+                <p>{{ form.junior2.label_tag }} {{ form.junior2 }}</p>
+                <p>{{ form.junior3.label_tag }} {{ form.junior3 }}</p>
+            </div>
+        </div>
+
+        <hr>
+        <button type="submit">▶ Clasificar y Descargar Excel</button>
+    </form>
+</body>
+</html>

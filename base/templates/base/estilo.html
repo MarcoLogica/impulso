@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de pendientes</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
+
+    <style>
+
+
+
+
+/*////////////////////////////////////////////Estilo fondo pantalla//////////////////////////////////*/
+        body {
+            background-color: #ffffff;
+            font-family: "Abel", serif;
+            pading-top: 60px;
+             margin: 50px;
+
+            }
+
+/*////////////////////////////////////////////PAGINAS DE FORMULARIOS///////////////////////////////////*/
+
+       .contenedor-fondo-formularios{
+        background-color: #f4f5f9;
+        padding: 10px;
+        max-width: 1800px;
+        height: 810px;
+        display: column;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+
+        }
+
+        .contenedor-superior-formulario{
+        background-color: #34495E;
+        max-width: 1700px;
+        height: 100px;
+        display: flex;
+        margin: 10px;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+        }
+
+        .contenedor-central-formularios{
+        background-color: #ECF0F1;
+        max-width: 1680px;
+        padding: 10px;
+        height: 550px;
+        display: flex;
+        gap: 50px;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+        border: 1px solid #BDC3C7;
+
+        }
+
+        .contenedor-tabla-formularios{
+        background-color: #d3d4d6;
+        max-width: 1100px;
+        height: 500px;
+        padding: 10px;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+
+        }
+
+        .contenedor-form-formularios{
+        background-color: #d3d4d6;
+        max-width: 300px;
+        height: 500px;
+        padding: 10px;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+
+        }
+
+        .contenedor-inferior-formularios{
+        display: flex;
+        gap:10px;
+        margin: 10px;
+        padding-right: 20px;
+        justify-content: flex-end;
+        align-items: center;
+        background-color: #34495E;
+        max-width: 1680px;
+        height: 100px;
+        color: white;
+        font-size: 16px;
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+        }
+
+
+/*////////////////////////////////////////////VISTA LISTAS///////////////////////////////////*/
+
+       .contenedor-fondo-listas{
+        background-color: #f4f5f9;
+        padding: 10px;
+        max-width: 1800px;
+        height: 810px;
+        display: column;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+
+        }
+
+        .contenedor-superior-listas{
+        background-color: #34495E;
+        max-width: 1700px;
+        height: 100px;
+        display: flex;
+        margin: 10px;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+        }
+
+        .contenedor-central-listas{
+        background-color: #ECF0F1;
+        max-width: 1680px;
+        padding: 10px;
+        height: 550px;
+        display: flex;
+        gap: 50px;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+        border: 1px solid #BDC3C7;
+
+
+        }
+
+        .contenedor-tabla-listas{
+        background-color: #d3d4d6;
+        max-width: 1100px;
+        height: 500px;
+        padding: 10px;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+
+        }
+
+        .contenedor-form-listas{
+        background-color: #d3d4d6;
+        max-width: 800px;
+        height: 500px;
+        padding: 10px;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+
+        }
+
+        .contenedor-inferior-listas{
+        display: flex;
+        gap:10px;
+        margin: 10px;
+        padding-right: 20px;
+        justify-content: flex-end;
+        align-items: center;
+        background-color: #34495E;
+        max-width: 1680px;
+        height: 100px;
+        color: white;
+        font-size: 16px;
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+        }
+
+/*////////////////////////////////////////////Contenedores ventana principal////////////////////////////////*/
+
+        .contenedor-fondo{
+
+        background-color: #a15dbd;
+        margin: auto;
+        max-width: 1800px;
+        height: 700px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+
+
+        }
+
+        .contenedor-ventana-central{
+        display: column;
+        background-color: #ffffff;
+        max-width: 1110px;
+        height: 800px;
+        color:white;
+        padding: 8px;
+        }
+
+
+        .contenedor-superior{
+        background-color: #010206;
+        max-width: 1100px;
+        height: 15px;
+
+        }
+
+        .contenedor-central{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #262627;
+        max-width: 1100px;
+        height: 100px;
+        color: white;
+        font-size: 16px;
+        border: 1px solid #5d5d5c;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        }
+
+
+        .contenedor-links{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #3b3c3d;
+        max-width: 1100px;
+        height: 75px;
+        color: white;
+        font-size: 20px;
+        margin: 10px 0;
+        -webkit-box-shadow: 2px 2px 13px -4px rgba(0,0,0,21);
+             box-shadow: 2px 2px 13px -4px rgba(0,0,0,21);
+        }
+
+        .contenedor-links a {
+        color: white;
+        text-decoration: none;
+
+        }
+
+        .contenedor-principal-central{
+        background-color: #1f1f1e;
+        margin: 5px;
+        max-width: 1800px;
+        height: 800px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1px;
+        margin: 5px 0;
+
+
+
+        }
+
+        .contenedor1-principal{
+        background-color: #525354;
+        max-width: 330px;
+        height: 350px;
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 0;
+        padding: 8px;
+        border: 1px solid #ffffff;
+
+        }
+
+        .contenedor1-principal a {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #ffffff;
+        font-size: 30px;
+
+        }
+
+        .contenedor1-principal:hover{
+        background-color: #466cd2;
+
+        }
+
+        .contenedor2-principal{
+        background-color: #525354;
+        max-width: 330px;
+        height: 350px;
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 0;
+        padding: 8px;
+        border: 1px solid #ffffff;
+        }
+
+        .contenedor2-principal a {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #ffffff;
+        font-size: 30px;
+
+        }
+
+        .contenedor2-principal:hover{
+        background-color: #466cd2;
+        }
+
+        .contenedor3-principal{
+        background-color: #848485;
+        max-width: 330px;
+        height: 350px;
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 0;
+        padding: 8px;
+
+        }
+
+        .contenedor3-principal a {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        -webkit-box-shadow: 2px 2px 13px -4px rgba(0,0,0,21);
+             box-shadow: 2px 2px 13px -4px rgba(0,0,0,21);
+        text-decoration: none;
+        color: #ffffff;
+        font-size: 30px;
+
+        }
+
+        .contenedor3-principal:hover{
+        background-color: #a4a59d;
+        }
+
+        .contenedor-inferior{
+        position: relative;
+        margin-top: 10px;
+        justify-content: center;
+        align-items: center;
+        background-color: #262627;
+        max-width: 1100px;
+        height: 60px;
+        color: white;
+        font-size: 16px;
+        border: 1px solid #5d5d5c;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+
+
+        }
+
+         .contenedor-gestionar {
+        display: flex;
+        width: 1750px;
+        height: 200px;
+        background-color: #3b3c3d;
+        font-size: 16px;
+        align-items: center;
+        gap: 20px;
+        margin: 8px 0px;
+
+
+
+
+        }
+
+        .contenedor-principal-gestionar{
+        background-color: #262627;
+        max-width: 1800px;
+        height: 550px;
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 8px 0px;
+        padding: 0px;
+        flex-direction: column;
+        border: 1px solid #5d5d5c;
+
+
+        }
+
+        .contenedor-inoutfondo{
+        background-color: #a6a6a8;
+        margin: auto;
+        max-width: 1800px;
+        height: 870px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+
+        }
+
+        .contenedor-superior-principal{
+        background-color: #262627;
+        max-width: 1800px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        border: 1px solid #5d5d5c;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        }
+
+        .contenedor-central-principal{
+        background-color: #1f1f1e;
+        margin: 5px;
+        max-width: 1800px;
+        height: 550px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        margin: 5px 0;
+        }
+
+        .contenedor-inferior-principal{
+        display: flex;
+        position: relative;
+        margin-top: 10px;
+        justify-content: center;
+        align-items: center;
+        background-color: #262627;
+        max-width: 1800px;
+        height: 100px;
+        color: white;
+        font-size: 16px;
+        border: 1px solid #5d5d5c;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+        }
+
+         .menu-botones2{
+        background-color: #1f1f1e;
+        max-width: 1130px;
+        height: 750px;
+        align-items: center;
+        margin: 10px 10px;
+        padding: 6px;
+        flex-direction: column;
+
+        }
+
+
+
+       .circle-container2 {
+        width: 300px;
+        height: 750px;
+        background-color: #262627;
+        border-radius: 2%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 10px;
+        flex-direction: column;
+        color: white;
+        border: 1px solid #5d5d5c;
+
+        }
+
+        .boton2{
+        background-color: #525354;
+        COLOR: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+        width: 400px;
+        height: 20px;
+        margin-bottom: 15px;
+        border: 1px solid #ffffff;
+
+        }
+
+        .boton2:hover{
+        background-color: #466cd2;
+        }
+
+        .contenedor-central{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ECF0F1;
+        max-width: 1600px;
+        height: 800px;
+        color: white;
+        font-size: 16px;
+
+        }
+
+
+/*///////////////////////////////////////////Contenedores ejemplo curso UDEMY///////////////////////////////////*/
+
+        .envoltorio-tarea {
+            display: flex;
+            align-item: center;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #ffffff;
+            border-top: 1px solid rgb(225,225,225);
+        }
+
+        .icono-tarea-completa{
+        height: 20px;
+        width: 20px;
+        background-color: rgb(218,218,218);
+        border-radius: 50px;
+        }
+
+/*////////////////////////////////////////////Estilo Tablas///////////////////////////////////*/
+
+        .estilo-tabla {
+         padding: 10px;
+         margin-top: 10px;
+         width: 100%;
+         border-collapse: collapse;
+         overflow: scroll;
+         max-width: 1000px;
+         height: 480px;
+         background-color: #dadbdd;
+         border: 1px solid #CCCCCC;
+         -webkit-box-shadow: 2px 2px 13px -4px rgba(0,0,0,21);
+             box-shadow: 2px 2px 13px -4px rgba(0,0,0,21);
+
+         }
+
+        .estilo-tabla th, .estilo-tabla td {
+        padding: 8px;
+        }
+
+        .estilo-tabla tr {
+         background-color: #ffffff;
+         color: #2C3E50;
+        }
+
+        .estilo-tabla tr:hover {
+        background-color: #ddd;
+        }
+
+        .estilo-tabla th {
+         background-color: #2C3E50;
+         color: white;
+         }
+
+
+
+/*////////////////////////////////////////////Estilo Formularios///////////////////////////////////*/
+
+
+
+        .formularios{
+        background-color: #898a8d;
+        max-width: 1100px;
+        height: 500px;
+        -webkit-box-shadow: 2px 2px 13px -4px rgba(0,0,0,21);
+             box-shadow: 2px 2px 13px -4px rgba(0,0,0,21);
+        padding: 8px;
+        color: white;
+
+        }
+
+/*////////////////////////////////////////////Estilo Botones///////////////////////////////////*/
+
+        .boton{
+        background-color: #525354;
+        COLOR: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+        width: 400px;
+        height: 20px;
+        margin-bottom: 15px;
+        border: 1px solid #ffffff;
+        position: absolute;
+
+        }
+
+        .boton:hover{
+        background-color: #010206;
+        }
+
+        .boton-volver{
+        background-color: #525354;
+        COLOR: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: flex;
+        font-size: 16px;
+        margin: 10px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+        width: 75px;
+        height: 20px;
+        border: 1px solid #ffffff;
+        margin-left: 950px;
+
+        }
+
+        .boton-volver:hover{
+        background-color: #466cd2;
+        }
+
+        .menuBotones{
+        background-color: #262627;
+        max-width: 1130px;
+        height: 550px;
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+        margin-left: 20px 40px;
+        padding: 6px;
+        flex-direction: column;
+        border: 1px solid #5d5d5c;
+
+
+
+        }
+
+/*////////////////////////////////////////////Contenedores geometricos///////////////////////////////////*/
+
+        .circle-container {
+        width: 400px;
+        height: 400px;
+        background-color: #010206;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 40px;
+        flex-direction: column;
+        color: white;
+        border: 0px solid #ffffff;
+        -webkit-box-shadow: 2px 2px 13px -4px rgba(0,0,0,21);
+             box-shadow: 2px 2px 13px -4px rgba(0,0,0,21);
+        }
+
+        .contenedor-proceso {
+        width: 250px;
+        height: 100px;
+        background-color: #262627;
+        clip-path: polygon(0% 0%, 75% 0%, 100% 50%, 75% 100%, 0% 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 8px;
+        margin-left: 20px
+
+        }
+
+        .contenedor-proceso:hover{
+        background-color: #466cd2;
+        }
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        {% block content %}
+
+        {% endblock content %}
+
+
+
+    </div>
+
+
+
+</body>
+</html>

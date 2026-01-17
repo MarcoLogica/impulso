@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Seleccionar tipo de iniciativa</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 60px;
+    }
+
+    .contenedor {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .opciones {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .tarjeta {
+      background-color: white;
+      border-radius: 12px;
+      padding: 30px;
+      width: 320px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: transform 0.2s;
+    }
+
+    .tarjeta:hover {
+      transform: translateY(-5px);
+    }
+
+    .tarjeta h3 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+
+    .tarjeta p {
+      font-size: 0.95em;
+      color: #555;
+    }
+
+    .boton {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-weight: bold;
+      font-size: 1em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .base {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .personalizada {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .volver {
+      display: block;
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #777;
+      text-decoration: none;
+    }
+
+    .volver:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h2>¿Cómo deseas crear tu iniciativa?</h2>
+
+    <div class="opciones">
+      <div class="tarjeta">
+        <h3>⚙️ Plan recomendado</h3>
+        <p>Generamos una hoja de ruta con fases y tareas base para ti.</p>
+        <a href="{% url 'crear_iniciativa_base' %}" class="boton base">Usar estructura base</a>
+      </div>
+
+      <div class="tarjeta">
+        <h3>🛠️ Iniciativa personalizada</h3>
+        <p>Comienza desde cero y define fases, tareas y fechas como tú prefieras.</p>
+        <a href="{% url 'crear_iniciativa_personalizada' %}" class="boton personalizada">Crear desde cero</a>
+      </div>
+    </div>
+
+    <a href="{% url 'lista_iniciativas' %}" class="volver">⬅️ Volver al listado</a>
+  </div>
+</body>
+</html>

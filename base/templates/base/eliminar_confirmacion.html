@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Eliminar iniciativa</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f4f6;
+      padding: 40px;
+    }
+
+    .card {
+      max-width: 500px;
+      margin: auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    h2 {
+      color: #c0392b;
+      margin-bottom: 25px;
+    }
+
+    p {
+      color: #444;
+      font-size: 0.95em;
+    }
+
+    .btn-eliminar {
+      background-color: #e74c3c;
+      color: white;
+      font-weight: bold;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .btn-eliminar:hover {
+      background-color: #c0392b;
+    }
+
+    .volver {
+      display: block;
+      margin-top: 25px;
+      text-decoration: none;
+      color: #555;
+      font-size: 0.9em;
+    }
+
+    .volver:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>⚠️ ¿Eliminar esta iniciativa?</h2>
+    <p>Esta acción no se puede deshacer.<br>
+       Estás a punto de eliminar la iniciativa: <strong>{{ iniciativa.nombre }}</strong></p>
+
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn-eliminar">Eliminar definitivamente</button>
+    </form>
+
+    <a href="{% url 'vista_plan' iniciativa.id %}" class="volver">⬅️ Cancelar y volver al plan</a>
+  </div>
+
+</body>
+</html>

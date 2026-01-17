@@ -1,0 +1,266 @@
+{% extends "base/estilos.html" %}
+{% block title %}Campañas{% endblock %}
+{% block content %}
+
+
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard RPA LinkedIn</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <style>
+  * {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #d9d9dc;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  padding: 20px 40px 20px 20px; /* espacio derecho moderado, izquierdo al ras */
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.box {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 700px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+h2 {
+  margin-top: 0;
+  color: #0073b1;
+  font-size: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+input[type="number"],
+input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #0073b1;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #005582;
+}
+
+canvas {
+  flex-grow: 1;
+  width: 100% !important;
+  height: 100% !important;
+  background: #fafafa;
+  border-radius: 6px;
+  padding: 0;
+}
+#status {
+  margin-top: 10px;
+  font-weight: bold;
+  color: green;
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+}
+
+    .boton-volver-feed {
+  display: inline-block;
+  background-color: #95a5a6;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: background-color 0.2s;
+}
+
+.boton-volver-feed:hover {
+  background-color: #7f8c8d;
+}
+  </style>
+</head>
+<body>
+
+  <div class="grid">
+    <!-- Cuadro 1: Control del RPA -->
+    <div class="box">
+      <h2>⚙️ Control del RPA</h2>
+      <label for="limite">Cantidad de contactos a procesar:</label>
+      <input type="number" id="limite" name="limite" min="1" max="100" value="30" />
+      <label for="file-upload">Importar contactos (.xlsx):</label>
+      <input type="file" id="file-upload" accept=".xlsx" />
+      <button onclick="importarContactos()">📥 Cargar contactos</button>
+      <button onclick="ejecutarRPA()">🚀 Ejecutar RPA</button>
+      <p id="status"></p>
+    </div>
+
+    <!-- Cuadro 2: Métricas generales -->
+
+
+    <!-- Cuadro 3: Histograma total -->
+    <div class="box">
+      <h2>📦 Total procesados por día</h2>
+      <canvas id="grafico1"></canvas>
+    </div>
+
+    <!-- Cuadro 4: Gráfico circular -->
+    <div class="box">
+      <h2>🧩 Estado de Contactos</h2>
+      <canvas id="grafico3"></canvas>
+    </div>
+  </div>
+
+  <script>
+    Chart.register(ChartDataLabels);
+
+    function importarContactos() {
+      const archivo = document.getElementById("file-upload").files[0];
+      if (!archivo) {
+        alert("⚠️ Selecciona un archivo Excel.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("archivo", archivo);
+
+      fetch("/cargar-excel/", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.mensaje || data.error);
+        actualizarMetricas();
+      })
+      .catch(() => alert("❌ Error al importar contactos."));
+    }
+
+    function ejecutarRPA() {
+      const limite = document.getElementById("limite").value;
+      if (limite < 1) {
+        alert("⚠️ Ingresa una cantidad válida.");
+        return;
+      }
+
+      fetch("/ejecutar-rpa/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ limite: limite })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("status").innerText = data.mensaje || data.error;
+        actualizarMetricas();
+      })
+      .catch(() => {
+        document.getElementById("status").innerText = "❌ Error al ejecutar el RPA.";
+      });
+    }
+
+    function actualizarMetricas() {
+      fetch("/obtener-metricas/")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("mensajes_enviados").innerText = data.mensajes_enviados;
+        document.getElementById("respuestas_recibidas").innerText = data.respuestas_recibidas;
+        document.getElementById("contactos_procesados").innerText = data.contactos_procesados;
+        document.getElementById("porcentaje_exito").innerText = data.porcentaje_exito + "%";
+      });
+    }
+
+    function renderGrafico(id, ruta, titulo, tipo = "bar") {
+      fetch(ruta)
+        .then(res => res.json())
+        .then(data => {
+          new Chart(document.getElementById(id).getContext("2d"), {
+            type: tipo,
+            data: {
+              labels: data.labels,
+              datasets: [{
+                label: titulo,
+                data: data.data,
+                backgroundColor: tipo === "doughnut"
+                  ? ["#28a745", "#dc3545"] // 🟢 verde, 🔴 rojo
+                  : "#0073b1",
+                borderColor: "#fff",
+                borderWidth: tipo === "doughnut" ? 1 : 0
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { display: tipo === "doughnut" },
+                datalabels: tipo === "doughnut" ? {
+                  color: "#fff",
+                  font: { weight: "bold" },
+                  formatter: (value, ctx) => {
+                    const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                    const percent = total > 0 ? Math.round((value / total) * 100) : 0;
+                    return `${percent}%`;
+                  }
+                } : false,
+                tooltip: {
+                  callbacks: {
+                    label: ctx => `${ctx.label}: ${ctx.raw}`
+                  }
+                }
+              },
+              scales: tipo === "bar" ? { y: { beginAtZero: true } } : {}
+            }
+          });
+        });
+    }
+
+    actualizarMetricas();
+    renderGrafico("grafico1", "/metricas/total-dia/", "Procesados por día", "bar");
+    renderGrafico("grafico3", "/metricas/resumen-contactos/", "Estado de contactos", "doughnut");
+  </script>
+
+<a href="{% url 'feed_comunitario' %}" class="boton-volver-feed">
+  ← Volver al feed
+</a>
+</body>
+</html>
+
+{% endblock content %}

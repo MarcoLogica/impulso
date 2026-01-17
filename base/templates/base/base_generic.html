@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Mi Aplicación{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>{% block header %}Encabezado de la Aplicación{% endblock %}</h1>
+    </header>
+    <nav>
+        <!-- Navegación -->
+    </nav>
+    <main>
+        {% block content %}
+        <!-- Contenido principal -->
+        {% endblock %}
+    </main>
+    <footer>
+        <!-- Pie de página -->
+    </footer>
+</body>
+</html>

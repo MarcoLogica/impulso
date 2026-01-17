@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi Agenda - IMPULSO</title>
+
+  <!-- FullCalendar CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f2f6ff, #eaf4fa);
+      margin: 0;
+      padding: 40px;
+      color: #2c3e50;
+    }
+
+    .contenedor {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .motivacion {
+      font-style: italic;
+      color: #7f8c8d;
+      margin-bottom: 30px;
+    }
+
+    #agendaCalendario {
+      max-width: 100%;
+      margin: auto;
+    }
+
+    a.volver-feed {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      background-color: #3498db;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1em;
+      transition: background 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    a.volver-feed:hover {
+      background-color: #2980b9;
+    }
+
+    .tooltip-agenda {
+      position: absolute;
+      background: #ffffff;
+      border: 1px solid #dcdcdc;
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      z-index: 1000;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="contenedor">
+    <h2>🗓️ Mi agenda personal</h2>
+    <p class="motivacion">“Organiza tu semana, potencia tu propósito.”</p>
+
+    <div id="agendaCalendario"></div>
+
+    <a href="{% url 'feed_comunitario' %}" class="volver-feed">⬅️ Volver al feed comunitario</a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const calendarEl = document.getElementById('agendaCalendario');
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        firstDay: 1,
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: '/api/tareas/',
+        eventClick: function(info) {
+          info.jsEvent.preventDefault();
+          if (info.event.url) {
+            window.open(info.event.url, "_blank");
+          }
+        },
+        eventDidMount: function(info) {
+          const iniciativa = info.event.extendedProps.iniciativa;
+          if (iniciativa) {
+            const tooltip = document.createElement("div");
+            tooltip.className = "tooltip-agenda";
+            tooltip.innerText = `🌱 Iniciativa: ${iniciativa}`;
+
+            info.el.addEventListener("mouseenter", () => {
+              document.body.appendChild(tooltip);
+              const rect = info.el.getBoundingClientRect();
+              tooltip.style.top = `${rect.top + window.scrollY - 35}px`;
+              tooltip.style.left = `${rect.left + window.scrollX}px`;
+            });
+
+            info.el.addEventListener("mouseleave", () => {
+              if (document.body.contains(tooltip)) {
+                tooltip.remove();
+              }
+            });
+          }
+        }
+      });
+      calendar.render();
+    });
+  </script>
+
+</body>
+</html>

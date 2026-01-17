@@ -1,0 +1,40 @@
+{% extends 'base/estilo.html' %}
+{% block content %}
+
+<div class="contenedor-fondo">
+
+
+
+
+<h1>soy la vista</h1>
+
+<a href="{% url 'crear-pokemon'%}">crear pokemon</a>
+
+<table>
+
+    <tr>
+        <th>Pokemon</th>
+        <th>Editar</th>
+
+    </tr>
+
+    {%for pokemon in pokemon%}
+
+    <tr>
+        <td>{{pokemon.nombre}}</td>
+        <td> <a href="{% url 'pokemon' pokemon.id %}">Editar</a> </td>
+
+    </tr>
+
+    {% empty %}
+    <h3>¡No hay pokemones ingresados aún!</h3>
+
+
+    {% endfor %}
+
+
+
+</table>
+
+</div>
+{% endblock content %}

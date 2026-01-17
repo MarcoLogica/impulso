@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Proceso</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eef2f5;
+      padding: 40px;
+    }
+
+    .card {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 25px;
+      font-size: 1.6em;
+    }
+
+    form label {
+      font-weight: bold;
+      color: #34495e;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.95em;
+      background-color: #f9f9f9;
+    }
+
+    button {
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 0.95em;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #219150;
+    }
+
+    .volver {
+      display: block;
+      text-align: center;
+      margin-top: 25px;
+      text-decoration: none;
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .volver:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>✏️ Editar Proceso</h2>
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">💾 Guardar cambios</button>
+    </form>
+
+    <a href="{% url 'ver_proceso' proceso.id %}" class="volver">← Volver al seguimiento</a>
+  </div>
+
+</body>
+</html>

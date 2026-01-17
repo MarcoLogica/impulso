@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Flujo de Ventas</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #D6D3D1;
+      margin: 0;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.8em;
+      margin-bottom: 40px;
+      color: #003366;
+    }
+
+    .etapas-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+    }
+
+    .etapa {
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.08);
+      width: 300px;
+      max-height: 650px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .etapa-header {
+      padding: 16px;
+      background-color: #0055aa;
+      color: #fff;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    .etapa-header h2 {
+      margin: 0;
+      font-size: 1.4em;
+    }
+
+    .etapa-header p {
+      margin: 4px 0 0;
+      font-size: 0.9em;
+      opacity: 0.9;
+    }
+
+    .etapa-scroll {
+      padding: 16px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .etapa-scroll.over {
+      background-color: #eef6ff;
+      border: 2px dashed #0055aa;
+      transition: background-color 0.3s ease;
+    }
+
+    .tarjeta {
+      background-color: #e6f0ff;
+      border-left: 6px solid #0055aa;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      cursor: grab;
+      transition: transform 0.3s ease;
+    }
+
+    .tarjeta:active {
+      transform: scale(1.05);
+    }
+
+    .tarjeta strong {
+      display: block;
+      font-size: 1.1em;
+      margin-bottom: 4px;
+    }
+
+    .tarjeta small {
+      color: #555;
+    }
+    .modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  z-index: 1000;
+  max-width: 500px;
+  width: 90%;
+}
+
+.modal-form h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.form-group {
+  margin-top: 15px;
+}
+
+.modal-form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.modal-form input,
+.modal-form select,
+.modal-form textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.form-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.form-buttons button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.form-buttons button[type="button"] {
+  background-color: #ccc;
+}
+
+    .tarjeta {
+  position: relative;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+.btn-eliminar-reunion {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: transparent;
+  border: none;
+  color: #d00;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.btn-eliminar-reunion:hover {
+  color: #a00;
+}
+
+    .filtro-contacto {
+  margin-bottom: 16px;
+}
+
+.filtro-contacto label {
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.filtro-contacto input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-width: 300px;
+}
+  </style>
+</head>
+<body>
+
+  <h1>Flujo de Ventas</h1>
+
+  <div class="etapas-container">
+
+    <!-- Contactos -->
+    <div class="etapa">
+
+      <div class="etapa-header">
+        <!-- Filtro por nombre de contacto -->
+<div class="filtro-contacto">
+  <label for="busquedaContacto">🔍 Filtrar contactos:</label>
+  <input type="text" id="busquedaContacto" oninput="filtrarContactos()" placeholder="Escribe un nombre...">
+</div>
+        <h2>Contactos</h2>
+        <p>{{ contactos|length }} registrados</p>
+      </div>
+      <div class="etapa-scroll" ondragover="allowDrop(event)" ondrop="drop(event, 'contacto')">
+        {% for contacto in contactos %}
+          <div class="tarjeta" draggable="true" ondragstart="drag(event)" data-id="{{ contacto.id }}">
+            <strong>{{ contacto.nombre }}</strong>
+            <small>{{ contacto.industria }} · {{ contacto.cargo }}</small>
+            <small>Etapa: {{ contacto.get_etapa_ventas_display }}</small>
+          </div>
+        {% empty %}
+          <p>No hay contactos registrados.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Reuniones -->
+<div class="etapa">
+  <div class="etapa-header">
+    <h2>Reuniones</h2>
+    <p>{{ reuniones|length }} agendadas</p>
+  </div>
+  <div class="etapa-scroll" ondragover="allowDrop(event)" ondrop="drop(event, 'reunion')">
+    {% for reunion in reuniones %}
+      <div class="tarjeta" draggable="true" ondragstart="drag(event)" data-id="{{ reunion.id }}">
+        <!-- Botón eliminar -->
+        <button class="btn-eliminar-reunion" onclick="eliminarReunion({{ reunion.id }})">❌</button>
+
+
+        <!-- Contenido de la tarjeta -->
+        <strong>{{ reunion.contacto.nombre }}</strong><br>
+        <small>{{ reunion.modalidad }} · {{ reunion.fecha|date:"d M Y H:i" }}</small><br>
+        <small>Resultado: {{ reunion.resultado }}</small>
+      </div>
+    {% empty %}
+      <p>No hay reuniones agendadas.</p>
+    {% endfor %}
+  </div>
+</div>
+
+    <!-- Licitaciones -->
+    <div class="etapa">
+      <div class="etapa-header">
+        <h2>Licitaciones</h2>
+        <p>{{ licitaciones|length }} activas</p>
+      </div>
+      <div class="etapa-scroll" ondragover="allowDrop(event)" ondrop="drop(event, 'licitacion')">
+        {% for licitacion in licitaciones %}
+          <div class="tarjeta" draggable="true" ondragstart="drag(event)" data-id="{{ licitacion.contacto.id }}">
+            <strong>{{ licitacion.contacto.nombre }}</strong>
+            <small>{{ licitacion.nombre_proyecto }}</small>
+            <small>Estado: {{ licitacion.estado }}</small>
+          </div>
+        {% empty %}
+          <p>No hay licitaciones registradas.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Cierres -->
+    <div class="etapa">
+      <div class="etapa-header">
+        <h2>Cierres</h2>
+        <p>{{ cierres|length }} completados</p>
+      </div>
+      <div class="etapa-scroll" ondragover="allowDrop(event)" ondrop="drop(event, 'cierre')">
+        {% for cierre in cierres %}
+          <div class="tarjeta" draggable="true" ondragstart="drag(event)" data-id="{{ cierre.contacto.id }}">
+            <strong>{{ cierre.contacto.nombre }}</strong>
+            <small>{{ cierre.tipo_cierre }} · {{ cierre.fecha_cierre|date:"d M Y" }}</small>
+            <small>Monto: ${{ cierre.monto_final }}</small>
+          </div>
+        {% empty %}
+          <p>No hay cierres registrados.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- PostVenta -->
+    <div class="etapa">
+      <div class="etapa-header">
+        <h2>PostVenta</h2>
+        <p>{{ postventas|length }} en seguimiento</p>
+      </div>
+      <div class="etapa-scroll" ondragover="allowDrop(event)" ondrop="drop(event, 'postventa')">
+        {% for postventa in postventas %}
+          <div class="tarjeta" draggable="true" ondragstart="drag(event)" data-id="{{ postventa.contacto.id }}">
+            <strong>{{ postventa.contacto.nombre }}</strong>
+            <small>{{ postventa.tipo_servicio }} · {{ postventa.fecha_inicio|date:"d M Y" }}</small>
+            <small>Satisfacción: {{ postventa.nivel_satisfaccion }}/5</small>
+          </div>
+        {% empty %}
+          <p>No hay registros de postventa.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JavaScript Drag & Drop -->
+  <script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  const csrftoken = getCookie('csrftoken');
+  let tarjetaArrastrada = null;
+
+  function allowDrop(ev) {
+    ev.preventDefault();
+    ev.currentTarget.classList.add('over');
+  }
+
+  function drag(ev) {
+    tarjetaArrastrada = ev.target;
+    const id = ev.target.dataset.id;
+    ev.dataTransfer.setData("contactoId", id);
+  }
+
+  function drop(ev, etapaDestino) {
+    ev.preventDefault();
+    const areaDestino = ev.currentTarget;
+    areaDestino.classList.remove('over');
+
+    const contactoId = ev.dataTransfer.getData("contactoId");
+
+    if (etapaDestino === 'reunion') {
+      // Abrir modal con datos precargados
+      document.getElementById('modal-reunion').style.display = 'block';
+      document.getElementById('contacto_id').value = contactoId;
+      document.getElementById('fecha').value = new Date().toISOString().slice(0, 16);
+      tarjetaArrastrada = tarjetaArrastrada || ev.target;
+    } else {
+      // Para otras etapas: actualizar directamente
+      fetch(`/actualizar_etapa/${contactoId}/${etapaDestino}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+      }).then(response => {
+        if (response.ok) {
+          if (tarjetaArrastrada && areaDestino) {
+            areaDestino.appendChild(tarjetaArrastrada);
+          }
+        } else {
+          alert("No se pudo actualizar el contacto.");
+        }
+      }).catch(error => {
+        console.error("Error en la solicitud:", error);
+        alert("No se pudo actualizar el contacto.");
+      });
+    }
+  }
+
+  // 🧼 Limpiar visual al salir del área
+  document.querySelectorAll('.etapa-scroll').forEach(area => {
+    area.addEventListener('dragleave', () => {
+      area.classList.remove('over');
+    });
+  });
+
+  function cerrarModal() {
+    document.getElementById('modal-reunion').style.display = 'none';
+    
+  }
+
+
+
+  document.getElementById('form-reunion').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const contactoId = document.getElementById('contacto_id').value;
+    const fecha = document.getElementById('fecha').value;
+    const modalidad = document.getElementById('modalidad').value;
+    const resultado = document.getElementById('resultado').value;
+
+    if (!contactoId || !fecha || !modalidad || !resultado) {
+      alert("Por favor completa todos los campos.");
+      return;
+    }
+
+    const data = {
+      contacto_id: contactoId,
+      fecha: fecha,  // ✅ esto mantiene la hora local
+      modalidad: modalidad,
+      resultado: resultado
+    };
+
+    fetch('/crear_reunion/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(response => response.json())
+      .then(data => {
+        if (data.status === 'ok') {
+          cerrarModal();
+          document.querySelector('[data-id="' + contactoId + '"]').remove();
+          alert("✅ Reunión registrada con éxito.");
+        } else {
+          alert("⚠️ Error al registrar la reunión: " + (data.error || "Desconocido"));
+        }
+      }).catch(error => {
+        console.error("Error:", error);
+        alert("❌ No se pudo registrar la reunión.");
+      });
+  });
+
+    function cargarReuniones() {
+  fetch('/contactos_con_reuniones/')
+    .then(res => res.json())
+    .then(data => {
+      const contenedor = document.getElementById('reuniones-scroll');
+      const resumen = document.getElementById('resumen-reuniones');
+      contenedor.innerHTML = '';
+      resumen.innerHTML = '';
+
+      const contactos = data.contactos;
+      resumen.textContent = `Total: ${contactos.length} reuniones registradas`;
+
+      contactos.forEach(c => {
+        const tarjeta = document.createElement('div');
+        tarjeta.className = 'tarjeta';
+        tarjeta.dataset.id = c.id;
+        tarjeta.innerHTML = `
+          <strong>${c.nombre}</strong><br>
+          <small>${c.fecha} · ${c.modalidad}</small><br>
+          <em>${c.resultado}</em>
+        `;
+        contenedor.appendChild(tarjeta);
+      });
+    });
+}
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const csrftoken = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('csrftoken='))
+      ?.split('=')[1];
+
+    const form = document.getElementById('form-reunion');
+    if (!form) {
+      console.warn("⚠️ No se encontró el formulario");
+      return;
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      console.log("🟢 Formulario enviado");
+
+      const contactoId = document.getElementById('contacto_id').value;
+      const fecha = document.getElementById('fecha').value;
+      const modalidad = document.getElementById('modalidad').value;
+      const resultado = document.getElementById('resultado').value;
+
+      const data = {
+        contacto_id: contactoId,
+        fecha: new Date(fecha).toISOString(),
+        modalidad: modalidad,
+        resultado: resultado
+      };
+
+      fetch('/crear_reunion/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'ok') {
+          console.log("✅ Reunión creada:", data.reunion_id);
+          cerrarModal();
+          document.querySelector('[data-id="' + contactoId + '"]').remove();
+          alert("Reunión registrada con éxito");
+        } else {
+          console.warn("⚠️ Error:", data.error);
+          alert("Error al registrar la reunión");
+        }
+      })
+      .catch(err => {
+        console.error("❌ Error en el fetch:", err);
+        alert("No se pudo registrar la reunión");
+      });
+    });
+  });
+
+  function cerrarModal() {
+    document.getElementById('modal-reunion').style.display = 'none';
+  }
+
+</script>
+
+  <script>
+  document.getElementById("form-reunion").addEventListener("submit", function () {
+    const fechaLocal = new Date();
+    const fechaChile = fechaLocal.toLocaleString('sv-SE', {
+      timeZone: 'America/Santiago'
+    }).replace(' ', 'T');
+
+    document.getElementById("fecha").value = fechaChile;
+  });
+</script>
+
+ <script>
+  function eliminarReunion(id) {
+    fetch('/reuniones/eliminar/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `id=${id}`
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'ok') {
+        // Opcional: eliminar visualmente antes de recargar
+        const tarjeta = document.querySelector(`.tarjeta[data-id="${id}"]`);
+        if (tarjeta) tarjeta.remove();
+
+        // 🔄 Refrescar la página después de un breve delay
+        setTimeout(() => {
+          location.reload();
+        }, 500); // Puedes ajustar el tiempo si quieres una animación previa
+      } else {
+        alert(data.mensaje || 'No se pudo eliminar la reunión.');
+      }
+    })
+    .catch(error => {
+      console.error('Error al eliminar reunión:', error);
+      alert('Ocurrió un error al intentar eliminar la reunión.');
+    });
+  }
+</script>
+
+  <script>
+  function filtrarContactos() {
+    const filtro = document.getElementById('busquedaContacto').value.toLowerCase();
+    const tarjetas = document.querySelectorAll('.etapa-contacto .tarjeta');
+
+    tarjetas.forEach(tarjeta => {
+      const nombre = tarjeta.textContent.toLowerCase();
+      tarjeta.style.display = nombre.includes(filtro) ? 'block' : 'none';
+    });
+  }
+</script>
+
+<!-- Fondo difuminado -->
+<div id="modal-overlay" class="modal-overlay" style="display:none;"></div>
+
+<!-- Modal emergente -->
+<!-- Fondo difuminado -->
+<div id="modal-overlay" class="modal-overlay" style="display:none;"></div>
+
+<!-- Modal emergente centrado -->
+<div id="modal-reunion" class="modal-container" style="display:none;">
+  <form id="form-reunion" class="modal-form">
+    <h2>🗓️ Registrar nueva reunión</h2>
+
+    <input type="hidden" name="contacto_id" id="contacto_id">
+    <input type="hidden" name="fecha" id="fecha">
+
+    <div class="form-group">
+      <label for="modalidad">Modalidad:</label>
+      <select name="modalidad" id="modalidad" required>
+        <option value="">Selecciona</option>
+        <option value="presencial">Presencial</option>
+        <option value="virtual">Virtual</option>
+        <option value="teléfono">Teléfono</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="responsable">Responsable:</label>
+      <input type="text" name="responsable" id="responsable" placeholder="Nombre del responsable">
+    </div>
+
+    <div class="form-group">
+      <label for="resumen">Resumen:</label>
+      <textarea name="resumen" id="resumen" rows="3" placeholder="Breve resumen de la reunión..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="resultado">Resultado:</label>
+      <select name="resultado" id="resultado" required>
+        <option value="">Selecciona</option>
+        <option value="respondió">Respondió</option>
+        <option value="sin interés">Sin interés</option>
+        <option value="agendada">Agendada</option>
+        <option value="no respondió">No respondió</option>
+      </select>
+    </div>
+
+    <div class="form-buttons">
+      <button type="submit">✅ Registrar reunión</button>
+      <button type="button" onclick="cerrarModal()">Cancelar</button>
+    </div>
+  </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis Procesos de Selección</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eef2f5;
+      padding: 40px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .contenedor-scroll {
+      max-height: 700px;
+      overflow-y: auto;
+      padding-right: 10px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .empresa {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #34495e;
+    }
+
+    .detalle {
+      font-size: 0.95em;
+      margin-top: 8px;
+      color: #555;
+    }
+
+    .estado {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .estado span {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.85em;
+    }
+
+    .estado .activo {
+      background-color: #d5f5e3;
+      color: #27ae60;
+    }
+
+    .estado .finalizado {
+      background-color: #ebebeb;
+      color: #7f8c8d;
+    }
+
+    .botones {
+      margin-top: 14px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .boton {
+      background-color: #3498db;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.85em;
+      text-decoration: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      transition: background-color 0.2s;
+    }
+
+    .boton:hover {
+      background-color: #2980b9;
+    }
+
+    .crear {
+      display: block;
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 10px;
+    }
+
+    .crear:hover {
+      text-decoration: underline;
+    }
+
+    .boton-final {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: background-color 0.2s;
+}
+
+.boton-final.crear {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.boton-final.crear:hover {
+  background-color: #27ae60;
+}
+
+.boton-final.volver {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.boton-final.volver:hover {
+  background-color: #7f8c8d;
+}
+
+  </style>
+</head>
+<body>
+
+  <h2>🧭 Mis Procesos de Selección</h2>
+
+  <div class="acciones-final" style="text-align: center; margin-top: 30px;">
+  <a href="{% url 'crear_proceso' %}" class="boton-final crear">
+    ➕ Crear nuevo proceso
+  </a>
+  <a href="{% url 'feed_comunitario' %}" class="boton-final volver">
+    ← Volver al feed
+  </a>
+</div>
+
+
+  <div class="contenedor-scroll">
+
+    {% for proceso in procesos %}
+      <div class="card">
+        <div class="empresa">{{ proceso.empresa }}</div>
+        <div class="detalle">
+          Cargo: {{ proceso.cargo }}<br>
+          Iniciado el: {{ proceso.fecha_ingreso }}
+        </div>
+        <div class="estado">
+          {% if proceso.estado == 'activo' %}
+            <span class="activo">🟢 Activo</span>
+          {% else %}
+            <span class="finalizado">⚪ Finalizado</span>
+          {% endif %}
+        </div>
+        <div class="botones">
+          <a href="{% url 'ver_proceso' proceso.id %}" class="boton">📊 Ver seguimiento</a>
+          <a href="{% url 'editar_proceso' proceso.id %}" class="boton">✏️ Editar</a>
+          <a href="{% url 'eliminar_proceso' proceso.id %}" class="boton" style="background-color:#f1c40f; color: #2c3e50;">🗑️ Eliminar</a>
+
+        </div>
+      </div>
+    {% empty %}
+      <p style="text-align:center;">Aún no has creado ningún proceso. ¡Podrías iniciar uno ahora! 🚀</p>
+    {% endfor %}
+  </div>
+
+
+
+</body>
+</html>

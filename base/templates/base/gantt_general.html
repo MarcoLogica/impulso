@@ -1,0 +1,221 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gantt General – Iniciativas</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #89d750;
+      margin: 10px;
+      padding: 0px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #ffffff;
+      font-size: 2.5em;;
+    }
+
+    .gantt-contenedor {
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  max-height: 620px;
+  overflow-x: auto;       /* 💡 scroll horizontal */
+  overflow-y: auto;     /* ❌ sin scroll vertical */
+  border: 1px solid #ccc;
+}
+
+    .gantt-wrapper {
+      min-width: 1200px;
+      position: relative;
+    }
+
+    .gantt-time-scale {
+      display: flex;
+      margin-bottom: 8px;
+      font-size: 0.8em;
+      color: #555;
+    }
+
+    .fecha-label {
+      width: {{ px_por_dia }}px;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .gantt-table {
+      display: table;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .gantt-row {
+      display: table-row;
+      height: 52px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .gantt-label {
+      display: table-cell;
+      width: 260px;
+      vertical-align: top;
+      padding-right: 10px;
+      font-size: 0.9em;
+      color: #333;
+      white-space: nowrap;
+      padding-top: 6px;
+    }
+
+    .gantt-label strong {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 2px;
+      color: #222;
+    }
+
+    .gantt-bar-container {
+      display: table-cell;
+      position: relative;
+      height: 38px;
+    }
+
+    a.gantt-bar {
+      position: absolute;
+      height: 100%;
+      border-radius: 5px;
+      color: #fff;
+      text-shadow: 0 0 2px rgba(0,0,0,0.4);
+      font-size: 0.85em;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      white-space: nowrap;
+      overflow: hidden;
+      max-width: 100%;
+      text-decoration: none;
+      cursor: pointer;
+      transition: filter 0.15s;
+    }
+
+    a.gantt-bar:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    }
+
+    .hoy-linea {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background-color: red;
+      opacity: 0.85;
+      z-index: 20;
+      box-shadow: 0 0 4px rgba(255,0,0,0.5);
+    }
+
+    .leyenda {
+      margin-top: 40px;
+      font-size: 0.85em;
+      text-align: center;
+      color: #fff;
+    }
+
+    .boton-volver-feed {
+  display: inline-block;
+  background-color: #95a5a6;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: background-color 0.2s;
+}
+
+.boton-volver-feed:hover {
+  background-color: #7f8c8d;
+}
+
+
+
+  </style>
+</head>
+<body>
+
+<h2>📅 Vista Gantt – Fases individuales por iniciativa</h2>
+
+  <div style="margin-top: 40px; text-align: center; padding: 20px;">
+    <a href="{% url 'lista_iniciativas' %}" style="
+       display: inline-block;
+       background-color: #f87171;
+       color: white;
+       padding: 10px 20px;
+       border-radius: 6px;
+       text-decoration: none;
+       font-weight: bold;
+       font-size: 0.95em;
+       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+       transition: background-color 0.2s;">
+      ⬅️ Volver a lista de iniciativas
+    </a>
+    <a href="{% url 'feed_comunitario' %}" class="boton-volver-feed">
+      ← Volver al feed
+    </a>
+  </div>
+
+  <div class="gantt-contenedor">
+    <div class="gantt-wrapper">
+
+      {% if hoy_offset_px is not None %}
+        <div class="hoy-linea" style="left: {{ hoy_offset_px|add:260|floatformat:0 }}px;"></div>
+      {% endif %}
+
+      <!-- Escala temporal -->
+      <div class="gantt-time-scale">
+        <div style="width: 260px;"></div>
+        {% for fecha in fechas_gantt %}
+          <div class="fecha-label">{{ fecha|date:"d M" }}</div>
+        {% endfor %}
+      </div>
+
+      <!-- Fila de fases -->
+      <div class="gantt-table">
+        {% for fase in datos_gantt %}
+          <div class="gantt-row">
+            <div class="gantt-label">
+              <strong>{{ fase.nombre_iniciativa }}</strong>
+              {{ fase.label }}
+            </div>
+            <div class="gantt-bar-container">
+              <a href="{% url 'vista_plan' fase.iniciativa_id %}"
+                 class="gantt-bar"
+                 title="{{ fase.label }}"
+                 style="left: {{ fase.offset_px }}px;
+                        width: {{ fase.ancho_px }}px;
+                        background-color: {{ fase.color }};">
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+
+  <div class="leyenda">
+    Escala: 1 día = {{ px_por_dia }} px &nbsp;&nbsp;|&nbsp;&nbsp;
+    Fecha de inicio base: {{ fecha_inicio|date:"j M Y" }}
+  </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Open to Work - RPA</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f9ff;
+      padding: 40px;
+      color: #2c3e50;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    form {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input[type="file"] {
+      padding: 6px;
+      font-size: 1em;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1em;
+      transition: background 0.3s ease;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ecf0f1;
+    }
+
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+
+    a {
+      color: #2980b9;
+      text-decoration: none;
+    }
+
+    .marcado {
+      color: #2ecc71;
+      font-weight: bold;
+    }
+
+    .no-marcado {
+      color: #e74c3c;
+    }
+
+    .mensaje {
+      color: green;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🕵️ Panel de contactos LinkedIn detectados por RPA</h2>
+
+  {% if messages %}
+    <div class="mensaje">
+      {% for mensaje in messages %}
+        <p>{{ mensaje }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Formulario para importar Excel -->
+<form method="post" enctype="multipart/form-data" style="margin-bottom: 20px;">
+  {% csrf_token %}
+  <label>📁 Subir archivo Excel con contactos:</label>
+  <input type="file" name="archivo_excel" accept=".xlsx" required>
+  <button type="submit" name="accion" value="importar">Importar contactos</button>
+</form>
+
+<!-- Formulario separado para activar RPA -->
+<form method="post" style="margin-bottom: 30px;">
+  {% csrf_token %}
+  <button type="submit" name="accion" value="ejecutar_rpa">🔍 Activar RPA (detectar Open to Work)</button>
+</form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Perfil</th>
+        <th>Open to Work</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for contacto in contactos %}
+        <tr>
+          <td>{{ contacto.nombre }}</td>
+          <td><a href="{{ contacto.perfil_linkedin }}" target="_blank">Ver perfil</a></td>
+          <td>
+            {% if contacto.open_to_work %}
+              <span class="marcado">✅ Sí</span>
+            {% else %}
+              <span class="no-marcado">❌ No</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</body>
+</html>

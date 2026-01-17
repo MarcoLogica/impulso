@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear nueva iniciativa</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      padding: 60px;
+      margin: 0;
+    }
+
+    .contenedor {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    .campo-error {
+      color: red;
+      font-size: 0.9em;
+      margin-bottom: 16px;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .enlace-volver {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #555;
+      text-decoration: none;
+      font-size: 0.95em;
+    }
+
+    .enlace-volver:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h2>➕ Crear nueva iniciativa</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <label for="id_nombre">Nombre de la iniciativa:</label>
+      <input type="text" name="nombre" id="id_nombre" value="{{ form.nombre.value|default_if_none:'' }}">
+      {% if form.nombre.errors %}
+        <div class="campo-error">{{ form.nombre.errors.0 }}</div>
+      {% endif %}
+
+      <label for="id_objetivo">Objetivo principal:</label>
+      <input type="text" name="objetivo" id="id_objetivo" value="{{ form.objetivo.value|default_if_none:'' }}">
+      {% if form.objetivo.errors %}
+        <div class="campo-error">{{ form.objetivo.errors.0 }}</div>
+      {% endif %}
+
+      <button type="submit">Crear</button>
+    </form>
+
+    <hr style="margin: 40px 0;">
+
+<h3>🛠️ ¿Prefieres comenzar desde cero?</h3>
+<p>Crea una iniciativa totalmente personalizada, sin fases ni tareas predefinidas. Tú defines toda la estructura desde el inicio.</p>
+
+<a href="{% url 'crear_iniciativa_personalizada' %}"
+   style="
+     display: inline-block;
+     margin-top: 10px;
+     padding: 10px 20px;
+     font-weight: bold;
+     background-color: #28a745;
+     color: white;
+     border-radius: 6px;
+     text-decoration: none;
+   ">
+  Crear iniciativa personalizada
+</a>
+
+    <a href="{% url 'lista_iniciativas' %}" class="enlace-volver">⬅️ Volver al listado</a>
+  </div>
+</body>
+</html>

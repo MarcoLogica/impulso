@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar avance</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      padding: 40px;
+    }
+
+    .card {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.95em;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .btn-submit {
+      background-color: #27ae60;
+      color: white;
+      font-weight: bold;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      margin-top: 25px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1em;
+    }
+
+    .btn-submit:hover {
+      background-color: #219150;
+    }
+
+    .volver {
+      display: block;
+      text-align: center;
+      margin-top: 25px;
+      text-decoration: none;
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .volver:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>📅 Registrar avance en tu búsqueda</h2>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn-submit">Guardar evento</button>
+    </form>
+
+    <a href="{% url 'mi_agenda' %}" class="volver">⬅️ Ver mi agenda</a>
+  </div>
+
+</body>
+</html>

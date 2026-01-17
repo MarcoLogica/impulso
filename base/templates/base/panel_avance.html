@@ -1,0 +1,254 @@
+
+{% load static %}
+
+{% block content %}
+
+<style>
+    /* Contenedor principal */
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Título principal */
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #28a745;
+  text-align: center;
+}
+
+/* Subtítulo */
+.container p.text-muted {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 1rem;
+}
+
+/* Secciones */
+section {
+  margin-bottom: 50px;
+}
+
+/* Tarjetas */
+.card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.01);
+}
+
+/* Encabezados de tarjeta */
+.card-header {
+  padding: 16px 24px;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* Cuerpo de tarjeta */
+.card-body {
+  padding: 20px 24px;
+}
+
+/* Progreso */
+.progress {
+  height: 20px;
+  border-radius: 10px;
+  background-color: #e9ecef;
+  margin-top: 10px;
+}
+
+.progress-bar {
+  font-size: 0.85rem;
+  font-weight: bold;
+  line-height: 20px;
+}
+
+/* Lista de músculos */
+.list-inline-item {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  background-color: #6c757d;
+  color: white;
+  border-radius: 20px;
+  margin: 4px;
+}
+
+/* Feed motivacional */
+.feed-item {
+  background-color: #f8f9fa;
+  border-left: 5px solid #28a745;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+
+/* Gráfico */
+canvas {
+  margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 16px;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  .card-header {
+    font-size: 1rem;
+  }
+}
+
+</style>
+<div class="container mt-4">
+
+  <!-- 🧠 Título principal -->
+  <div class="text-center mb-5">
+    <h2 class="text-success fw-bold">🏋️‍♂️ Panel de Avance y Motivación</h2>
+    <p class="text-muted">Tu progreso físico y mental en IMPULSO Fitness</p>
+  </div>
+
+  <!-- 📊 Módulo: Resumen semanal -->
+  <section class="mb-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">📊 Resumen semanal</h5>
+      </div>
+      <div class="card-body">
+        <p><strong>Tareas completadas:</strong> {{ tareas_completadas }}</p>
+        <p><strong>Músculos trabajados:</strong> {{ musculos_unicos|length }}</p>
+        <canvas id="graficoProgreso" height="100"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🚀 Módulo: Iniciativas activas -->
+<section class="mb-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-warning text-dark">
+      <h5 class="mb-0">🚀 Iniciativas activas</h5>
+    </div>
+    <div class="card-body">
+      {% for iniciativa in iniciativas %}
+        <div class="mb-4 p-3 border rounded bg-light">
+          <h5 class="fw-bold text-success">{{ iniciativa.nombre }}</h5>
+          <p class="mb-2">
+            <span class="text-muted">Fases activas:</span> {{ iniciativa.fases.count }} |
+            <span class="text-muted">Avance:</span> {{ iniciativa.avance }}%
+          </p>
+
+          <div class="progress" style="height: 22px;">
+            <div class="progress-bar {{ iniciativa.color_barra }}" role="progressbar"
+                 style="width: {{ iniciativa.avance }}%;"
+                 aria-valuenow="{{ iniciativa.avance }}" aria-valuemin="0" aria-valuemax="100">
+              {{ iniciativa.avance }}%
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-muted">No tienes iniciativas activas aún.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+  <!-- 💪 Módulo: Músculos trabajados -->
+  <section class="mb-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-info text-white">
+        <h5 class="mb-0">💪 Músculos trabajados</h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-inline">
+          {% for musculo in musculos_unicos %}
+            <li class="list-inline-item badge bg-secondary m-1">{{ musculo }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🌟 Módulo: Hitos recientes -->
+  <section class="mb-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0">🌟 Hitos recientes</h5>
+      </div>
+      <div class="card-body">
+        {% for hito in hitos_recientes %}
+          <div class="border rounded p-3 mb-2">
+            <p><strong>{{ hito.descripcion }}</strong></p>
+            <p>Series: {{ hito.series }} | Repeticiones: {{ hito.repeticiones }} | Carga: {{ hito.carga }} kg</p>
+            <small class="text-muted">Registrado el {{ hito.creado_en|date:"d M Y" }}</small>
+          </div>
+        {% empty %}
+          <p>Aún no has registrado hitos.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- 🔥 Módulo: Feed motivacional -->
+  <section class="mb-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">🔥 Feed motivacional</h5>
+      </div>
+      <div class="card-body">
+        {% for publicacion in feed %}
+          <div class="feed-item">
+            <p><strong>{{ publicacion.usuario }}</strong> compartió:</p>
+            <p>{{ publicacion.contenido }}</p>
+            <div>
+              <span class="badge bg-success">💪</span>
+              <span class="badge bg-danger">🔥</span>
+              <span class="badge bg-info">🧘</span>
+            </div>
+          </div>
+        {% empty %}
+          <p>Tu comunidad aún no ha publicado avances.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+</div>
+<!-- 🔁 Botón para volver al feed comunitario -->
+<div class="text-center mt-4">
+  <a href="{% url 'feed_comunitario' %}" class="btn btn-outline-primary btn-lg" style="border-radius: 8px;">
+    🔁 Volver al feed comunitario
+  </a>
+</div>
+<!-- 📈 Gráfico JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('graficoProgreso').getContext('2d');
+  const graficoProgreso = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{ dias_semana|safe }},
+      datasets: [{
+        label: 'Tareas completadas',
+        data: {{ tareas_por_dia|safe }},
+        backgroundColor: '#28a745'
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+</script>
+{% endblock %}

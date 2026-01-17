@@ -1,0 +1,110 @@
+{% extends "base/estilos.html" %}
+{% block title %}Campañas{% endblock %}
+{% block content %}
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ejecutar campaña</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #d9d9dc;
+            padding: 0px;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 12px rgba(0,0,0,0.05);
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        textarea {
+            width: 100%;
+            border-radius: 4px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: #f8f8f8;
+        }
+        button {
+            padding: 10px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0069d9;
+        }
+        .result {
+            margin-top: 30px;
+            background: #eef7f2;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            border-radius: 6px;
+        }
+        .result ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🚀 Ejecutar campaña de prospección</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <label>Selecciona una campaña:</label>
+            <select name="campana_id" required>
+                {% for campana in campanas %}
+                    <option value="{{ campana.id }}">{{ campana.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Cantidad máxima de contactos a recorrer:</label>
+            <input type="number" name="limite" min="1" max="500" value="10" required>
+
+
+            <button type="submit" name="accion" value="preview">🔍 Ver coincidencias</button>
+            <button type="submit" name="accion" value="ejecutar">⚙️ Correr RPA</button>
+        </form>
+
+        {% if mensaje %}
+            <div class="result">
+                <p><strong>🧩 Mensaje de la campaña:</strong></p>
+                <textarea readonly rows="4">{{ mensaje }}</textarea>
+
+                <p><strong>👥 Contactos que coinciden:</strong> {{ coincidencias }}</p>
+                <ul>
+                    {% for contacto in contactos %}
+                        <li>{{ contacto.nombre }} – {{ contacto.industria }} – {{ contacto.cargo }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+{% endblock content %}

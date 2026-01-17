@@ -1,0 +1,429 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Plan de {{ iniciativa.nombre }}</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #5dade2;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .layout {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+    }
+
+    .contenedor {
+      flex: 3;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.06);
+      padding: 30px;
+    }
+
+    .panel-lateral {
+      flex: 1;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    .progreso {
+      margin-bottom: 25px;
+      background-color: #5499c7;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-left: 6px solid #4CAF50;
+    }
+
+    .barra {
+      position: relative;
+      height: 30px;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .barra-interna {
+  height: 100%;
+  background: linear-gradient(90deg, #4facfe, #00f2fe); /* Azul cielo → turquesa */
+  transition: width 0.5s ease-in-out;
+}
+
+    .barra-texto {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      line-height: 30px;
+      color: #333;
+    }
+
+    .fase {
+      background-color: #c6dae7;
+      border-left: 10px solid #ccc;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .fase-cabecera {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .fase-icono {
+      font-size: 1.6em;
+      margin-right: 10px;
+    }
+
+    .fase-nombre {
+      font-size: 1.4em;
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-fase {
+      font-size: 0.85em;
+      background-color: #008CBA;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .tarea {
+      background-color: #f2f2f2;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      position: relative;
+    }
+
+    .estado {
+      font-weight: bold;
+      font-style: italic;
+      color: #555;
+    }
+
+    .boton-completar {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.85em;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      position: absolute;
+      top: 10px;
+      right: 12px;
+    }
+
+    .panel-lateral ul {
+      padding-left: 18px;
+      font-size: 0.95em;
+      color: #333;
+      margin: 0 0 20px 0;
+    }
+
+    .panel-lateral h4 {
+      margin-top: 0;
+    }
+
+    .panel-lateral hr {
+      margin: 10px 0 15px 0;
+    }
+
+    .motivacion {
+      color: #444;
+      font-style: italic;
+    }
+
+    .panel-lateral ul {
+  padding-left: 24px;
+  line-height: 1.6;
+}
+.panel-lateral h4 {
+  font-size: 1.1em;
+}
+
+   .panel-lateral {
+  flex: 1.2; /* antes era 1 */
+  /* ... el resto igual */
+}
+.contenedor {
+  flex: 2.8; /* antes era 3 */
+}
+
+    .boton-eliminar {
+  background-color: #f87171;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.boton-eliminar:hover, .boton-eliminar-tarea:hover {
+  background-color: #e53935;
+
+}
+
+.boton-eliminar-tarea {
+  background: none;
+  border: none;
+  color: #c0392b;
+  font-size: 16px;
+  padding: 0;
+  margin-left: 6px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.boton-eliminar-tarea:hover {
+  color: #e74c3c;
+}
+
+.boton-editar-tarea {
+  margin-left: 8px;
+  font-size: 0.85em;
+  text-decoration: none;
+}
+
+.boton-verde {
+  display: inline-block;
+  background-color: #82e0aa;
+  color: black;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+
+.boton-rojo {
+  display: inline-block;
+  background-color: #f87171;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 0.9em;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: background-color 0.2s;
+}
+
+.boton-amarillo {
+  background-color: #ffc107;
+  color: black;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.boton-gantt {
+  display: inline-block;
+  background-color: #6f42c1;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.85em;
+}
+
+    .boton-replicar {
+  background-color: #5dade2; /* azul claro */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.boton-replicar:hover {
+  background-color: #3498db; /* azul más intenso al pasar el mouse */
+}
+  </style>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- 🌐 Panel principal -->
+    <div class="contenedor">
+
+      <div class="progreso">
+        <h2 style="color: white; font-size: 28px;">
+        📈 Progreso general de tu Iniciativa – {{ iniciativa.nombre }}
+        </h2>
+
+        <div class="barra">
+          <div class="barra-interna" style="width: {{ progreso_total }}%;"></div>
+          <span class="barra-texto">{{ progreso_total }}%</span>
+        </div>
+
+        <!-- 🟡 Botón para crear nueva fase -->
+        <div style="margin-top: 15px; text-align: center;">
+          <a href="{% url 'crear_fase' iniciativa.id %}" class="boton-verde">➕ Agregar nueva fase</a>
+          <a href="{% url 'lista_iniciativas' %}" class="boton-rojo">⬅️ Volver a iniciativas</a>
+        </div>
+      </div>
+
+      {% for fase in fases %}
+        <div class="fase" style="border-left-color: {{ fase.color_hex }};">
+          <div class="fase-cabecera">
+            <h3 class="fase-nombre">
+              <span class="fase-icono">{{ fase.icono }}</span>
+              {{ fase.nombre }}
+            </h3>
+            <div style="display: flex; gap: 10px;">
+              <a href="{% url 'vista_fase_detalle' fase.id %}" class="btn-fase">🔍 Trabajar esta fase</a>
+              <a href="{% url 'editar_fase' fase.id %}" class="boton-amarillo">✏️ Editar</a>
+              <a href="{% url 'eliminar_fase' fase.id %}" class="boton-eliminar" onclick="return confirm('¿Eliminar esta fase y todas sus tareas asociadas?')">🗑️ Eliminar</a>
+              <a href="{% url 'replicar_fase' fase.id %}" class="boton-replicar">🔁 Replicar fase</a>
+            </div>
+          </div>
+
+          <!-- 🔃 Lista de tareas con drag & drop -->
+          <ul id="lista-tareas-{{ fase.id }}" class="sortable-tareas" data-fase-id="{{ fase.id }}" style="list-style-type: none; padding-left: 0; margin-top: 10px;">
+            {% for tarea in fase.tareas.all %}
+              <li class="tarea" data-id="{{ tarea.id }}">
+                {% if tarea.estado != 'completada' %}
+                  <form method="post" action="{% url 'actualizar_estado_tarea' tarea.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <a href="{% url 'marcar_tarea_completada' tarea.id %}" class="boton-completar" title="Marcar como completada y registrar hito">✅</a>
+                  </form>
+                {% endif %}
+                <strong>{{ tarea.nombre }}</strong>
+                <a href="{% url 'editar_tarea' tarea.id %}" title="Editar tarea" class="boton-editar-tarea">✏️</a>
+                <a href="{% url 'eliminar_tarea' tarea.id %}" title="Eliminar tarea" class="boton-eliminar-tarea" onclick="return confirm('¿Eliminar esta tarea?')">🗑️</a><br>
+                <small>
+                  {{ tarea.fecha_inicio|date:"j F Y" }} – duración: {{ tarea.duracion_dias }} días – Estado:
+                  <span class="estado">{{ tarea.get_estado_display }}</span>
+                </small>
+              </li>
+            {% empty %}
+              <li style="margin-bottom: 10px; color: #666;">No hay tareas aún para esta fase.</li>
+            {% endfor %}
+          </ul>
+
+          <!-- 🟡 Botón para crear tarea en esta fase -->
+          <a href="{% url 'crear_tarea_en_fase' fase.id %}" class="boton-amarillo">📌 Nueva tarea para esta fase</a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- 📊 Panel lateral -->
+    <div class="panel-lateral">
+      <h4>📊 Resumen operativo</h4>
+      <ul>
+        <li>📋 <strong>Tareas totales:</strong> {{ total_tareas }}</li>
+        <li>✅ <strong>Completadas:</strong> {{ tareas_completadas }}</li>
+        <li>⏳ <strong>Pendientes:</strong> {{ tareas_pendientes }}</li>
+        <li>🚨 <strong>Retrasadas:</strong> {{ tareas_retrasadas }}</li>
+        <li>🧱 <strong>Fases del plan:</strong> {{ total_fases }}</li>
+      </ul>
+
+      <hr>
+
+      <h4>📅 Progreso temporal</h4>
+      <ul>
+        <li>📆 <strong>Fin estimado:</strong>
+          {% if fecha_fin_estimada %}
+            {{ fecha_fin_estimada|date:"d M Y" }}
+          {% else %}
+            Sin tareas agendadas
+          {% endif %}
+        </li>
+        <li>📅 <strong>Días restantes:</strong>
+          {% if dias_restantes != None %}
+            {{ dias_restantes }}
+          {% else %}
+            –
+          {% endif %}
+        </li>
+      </ul>
+
+      <hr>
+
+      <h4>🔥 Dinámica reciente</h4>
+      <ul>
+        <li>🟢 <strong>Última completada:</strong><br>
+          {% if ultima_tarea_completada %}
+            {{ ultima_tarea_completada.nombre }} ({{ ultima_tarea_completada.fecha_completada|date:"j M Y" }})
+          {% else %}
+            Nada completado aún
+          {% endif %}
+        </li>
+        <li>📈 <strong>Avance semanal:</strong> {{ avance_semanal }} tareas</li>
+        <li>🔥 <strong>Fase más activa:</strong><br>
+          {% if fase_mas_activa %}
+            {{ fase_mas_activa.icono }} {{ fase_mas_activa.nombre }}
+          {% else %}
+            – Ninguna aún
+          {% endif %}
+        </li>
+        <li>🎯 <strong>Próxima tarea:</strong><br>
+          {% if proxima_tarea %}
+            {{ proxima_tarea.nombre }} ({{ proxima_tarea.fecha_inicio|date:"j M Y" }})
+          {% else %}
+            Nada pendiente
+          {% endif %}
+        </li>
+      </ul>
+
+      <hr>
+      <p class="motivacion">{{ mensaje_motivacional }}</p>
+
+      <hr>
+      <h4>🗺️ Vista global</h4>
+      <a href="{% url 'gantt_general' %}" class="boton-gantt">📅 Ir al Gantt general</a>
+    </div>
+
+  </div>
+
+  <!-- 🔃 Script para drag & drop -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script>
+    document.querySelectorAll('.sortable-tareas').forEach(lista => {
+      Sortable.create(lista, {
+        animation: 150,
+        onEnd: function (evt) {
+          const faseId = lista.dataset.faseId;
+          const ordenado = Array.from(lista.children).map(el => el.dataset.id);
+
+          fetch(`/tareas/reordenar/${faseId}/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ orden: ordenado })
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

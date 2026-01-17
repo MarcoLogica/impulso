@@ -1,0 +1,17 @@
+<h2>Editar campaña</h2>
+<form method="post">
+    {% csrf_token %}
+    <label>Nombre:</label>
+    <input type="text" name="nombre" value="{{ campana.nombre }}"><br>
+
+    <label>Industria:</label>
+    <input type="text" name="industria" value="{{ campana.industria }}"><br>
+
+    <label>Cargo:</label>
+    <input type="text" name="cargo" value="{{ campana.cargo }}"><br>
+
+    <label>Mensaje:</label>
+    <textarea name="mensaje">{{ campana.mensaje }}</textarea><br>
+
+    <button type="submit">💾 Guardar cambios</button>
+</form>

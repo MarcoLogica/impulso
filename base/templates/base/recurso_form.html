@@ -1,0 +1,11 @@
+{% extends 'base/base_generic.html' %}
+
+{% block content %}
+  <h2>{% if form.instance.pk %}Editar Recurso{% else %}Agregar Recurso{% endif %}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar</button>
+  </form>
+  <a href="{% url 'recurso_list' %}">Volver a la lista</a>
+{% endblock %}

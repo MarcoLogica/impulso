@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <div class="encabezado-feed">
+  <h2>🌟 Logros de la comunidad</h2>
+  <p>Avances compartidos por quienes están construyendo su camino profesional. Cada paso inspira a otro. 🚀</p>
+</div>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eef2f5;
+      padding: 40px;
+    }
+
+    .container {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+    }
+
+    /* Barras laterales */
+    .barra-lateral {
+      flex: 1;
+      min-width: 220px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .barra-lateral h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+      font-size: 1.1em;
+    }
+
+    .barra-lateral ul {
+      list-style: none;
+      padding-left: 0;
+      font-size: 0.95em;
+      line-height: 1.6em;
+    }
+
+    .barra-lateral p {
+      font-style: italic;
+      color: #555;
+    }
+
+    .footer {
+      font-size: 0.75em;
+      color: #999;
+      margin-top: 20px;
+    }
+
+    .boton-nav {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      width: 90%;
+      font-size: 0.9em;
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: block;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .boton-nav:nth-child(2) { background-color: #5dade2; }
+    .boton-nav:nth-child(3) { background-color: #27ae60; }
+    .boton-nav:nth-child(4) { background-color: #e67e22; }
+    .boton-nav:nth-child(5) { background-color: #f87171; }
+
+    /* Feed comunitario */
+    .feed {
+      flex: 2;
+      min-width: 500px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .evento {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .icono {
+      font-size: 1.8em;
+    }
+
+    .detalle {
+      flex-grow: 1;
+    }
+
+    .detalle strong {
+      color: #34495e;
+    }
+
+    .detalle span {
+      display: block;
+      font-size: 0.85em;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .volver {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+      text-decoration: none;
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .volver:hover {
+      text-decoration: underline;
+    }
+    .encabezado-feed {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.encabezado-feed h2 {
+  color: #2c3e50;
+  font-size: 1.5em;
+  margin-bottom: 8px;
+}
+
+.encabezado-feed p {
+  color: #666;
+  font-size: 0.95em;
+  margin: 0;
+}
+    .contenedor-imagen-feed {
+  width: 100%;
+  max-width: 480px;
+  height: 280px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin: 15px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
+}
+
+.contenedor-imagen-feed img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Barra lateral izquierda: herramientas -->
+    <aside class="barra-lateral">
+      <h3>🛠️ Herramientas de IMPULSO</h3>
+
+      {% if user.is_authenticated %}
+        <div style="background-color:#ecf0f1; padding:10px 12px; margin-bottom:10px; border-radius:8px;">
+          👋 Hola, <strong>{{ user.first_name|default:user.username }}</strong><br>
+          <form action="{% url 'logout' %}" method="post" style="margin-top:6px;">
+            {% csrf_token %}
+            <button type="submit" style="background:none; border:none; color:#e74c3c; cursor:pointer; padding:0;">
+              🚪 Cerrar sesión
+            </button>
+          </form>
+        </div>
+      {% endif %}
+
+      <a href="{% url 'lista_iniciativas' %}" class="boton-nav">
+        <span style="font-size: 1.4em; margin-right: 6px;">📋</span> Dale vida a lo invisible
+      </a>
+
+       <a href="{% url 'feed_comunitario' %}" class="boton-nav">
+        <span style="font-size: 1.4em; margin-right: 6px;">🧭</span> Gestiona y comparte la carga
+      </a>
+
+      <a href="{% url 'lista_procesos' %}" class="boton-nav">
+        <span style="font-size: 1.4em; margin-right: 6px;">🧭</span> Mis cargas asignadas
+      </a>
+
+      <a href="{% url 'gantt_general' %}" class="boton-nav">
+        <span style="font-size: 1.4em; margin-right: 6px;">🗂️</span> Mapa mental de maternidad
+      </a>
+
+      <a href="/agenda/mia/" class="boton-nav">
+        <span style="font-size: 1.4em; margin-right: 6px;">📅</span> Mi Agenda
+      </a>
+
+      <a href="{% url 'panel_metas_usuario' %}" class="boton-nav">
+        <span style="font-size: 1.4em; margin-right: 6px;">🎯</span> Módulo emocional
+      </a>
+
+      <a href="{% url 'publicar_en_feed' %}" class="boton-nav" style="background-color:#2ecc71; color:white;">
+        <span style="font-size: 1.4em; margin-right: 6px;">📝</span> Publicar en el Feed
+      </a>
+
+      <a href="{% url 'dashboard' %}" class="boton-nav">
+        <span style="font-size: 1.4em; margin-right: 6px;">🤖</span> RPA
+      </a>
+
+      <form action="{% url 'completar_contactos' %}" method="post" style="margin-top:10px;">
+  {% csrf_token %}
+  <button type="submit" class="boton-nav" style="background-color:#2980b9; color:white; width:100%; text-align:left;">
+    <span style="font-size: 1.4em; margin-right: 6px;">⚙️</span> Ejecutar RPA contactos
+  </button>
+</form>
+
+    </aside>
+
+    <!-- Feed principal -->
+    <div class="feed">
+
+      {% for publicacion in publicaciones %}
+        <div class="evento">
+          <div class="icono">📝</div>
+          <div class="detalle">
+            <strong>{{ publicacion.usuario.first_name|default:publicacion.usuario.username }}</strong> escribió:
+            <span>“{{ publicacion.contenido }}”</span>
+
+            {% if publicacion.imagen %}
+            <div class="contenedor-imagen-feed">
+              <img src="{{ publicacion.imagen.url }}" alt="Imagen publicada">
+            </div>
+            {% endif %}
+
+            <div style="margin-top: 10px;">
+              💚 <a href="{% url 'dar_reaccion' publicacion.id 'me_gusta' %}">Me gusta ({{ publicacion.me_gusta.count }})</a> ·
+              🎯 <a href="{% url 'dar_reaccion' publicacion.id 'animo' %}">Ánimo ({{ publicacion.animo.count }})</a> ·
+              💪 <a href="{% url 'dar_reaccion' publicacion.id 'fuerza' %}">Fuerza ({{ publicacion.fuerza.count }})</a> ·
+              🙌 <a href="{% url 'dar_reaccion' publicacion.id 'tu_puedes' %}">Tú puedes ({{ publicacion.tu_puedes.count }})</a> ·
+              🎉 <a href="{% url 'dar_reaccion' publicacion.id 'felicidades' %}">Felicidades ({{ publicacion.felicidades.count }})</a>
+            </div>
+
+            <span style="font-size: 0.8em; color: #888;">{{ publicacion.creado_en|date:"d M Y" }}</span>
+          </div>
+        </div>
+      {% endfor %}
+
+      {% if eventos %}
+        {% for evento in eventos %}
+        <div class="evento">
+          <div class="icono">
+            {% if evento.tipo_evento == 'llamada' %}📞
+            {% elif evento.tipo_evento == 'entrevista_agendada' %}🗓️
+            {% elif evento.tipo_evento == 'entrevista_realizada' %}✅
+            {% elif evento.tipo_evento == 'oferta' %}🎉
+            {% endif %}
+          </div>
+          <div class="detalle">
+            <strong>{{ evento.usuario.first_name|default:evento.usuario.username }}</strong>
+            registró un avance: <em>{{ evento.get_tipo_evento_display }}</em> con <strong>{{ evento.empresa }}</strong>.
+            <span>{{ evento.fecha_evento }}</span>
+            {% if evento.comentario %}
+              <span>💬 "{{ evento.comentario }}"</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p style="text-align:center;">Aún no se han publicado avances. ¡Tu registro podría inspirar a otros! 🚀</p>
+      {% endif %}
+
+      <a href="{% url 'registrar_evento' %}" class="volver">➕ Registrar mi propio avance</a>
+    </div>
+
+    <!-- Barra lateral derecha: métricas y motivación -->
+    <aside class="barra-lateral">
+      <h3>📊 Resumen de la semana</h3>
+      <ul>
+        <li>📞 <strong>{{ resumen.llamados }}</strong> llamados recibidos</li>
+        <li>🗓️ <strong>{{ resumen.entrevistas_agendadas }}</strong> entrevistas agendadas</li>
+        <li>✅ <strong>{{ resumen.entrevistas_realizadas }}</strong> entrevistas realizadas</li>
+        <li>🎉 <strong>{{ resumen.ofertas }}</strong> ofertas recibidas</li>
+      </ul>
+
+      <hr style="margin: 25px 0 15px 0;">
+      <h3>🌎 Impacto total de IMPULSO</h3>
+      <ul>
+        <li>📞 <strong>{{ total.llamados }}</strong> llamados registrados</li>
+        <li>🗓️ <strong>{{ total.entrevistas_agendadas }}</strong> entrevistas agendadas</li>
+        <li>✅ <strong>{{ total.entrevistas_realizadas }}</strong> entrevistas realizadas</li>
+        <li>🎉 <strong>{{ total.ofertas }}</strong> ofertas recibidas</li>
+      </ul>
+
+      <hr style="margin: 25px 0 15px 0;">
+      <p>“Cada paso es una victoria que te acerca.”</p>
+      <p>“Si otros avanzan, tú también puedes.”</p>
+      <div class="footer">Actualizado esta semana</div>
+    </aside>
+
+  </div>
+
+</body>
+</html>
