@@ -218,16 +218,7 @@
         <span style="font-size: 1.4em; margin-right: 6px;">📝</span> Publicar en el Feed
       </a>
 
-      <a href="{% url 'dashboard' %}" class="boton-nav">
-        <span style="font-size: 1.4em; margin-right: 6px;">🤖</span> RPA
-      </a>
 
-      <form action="{% url 'completar_contactos' %}" method="post" style="margin-top:10px;">
-  {% csrf_token %}
-  <button type="submit" class="boton-nav" style="background-color:#2980b9; color:white; width:100%; text-align:left;">
-    <span style="font-size: 1.4em; margin-right: 6px;">⚙️</span> Ejecutar RPA contactos
-  </button>
-</form>
 
     </aside>
 
@@ -287,30 +278,7 @@
       <a href="{% url 'registrar_evento' %}" class="volver">➕ Registrar mi propio avance</a>
     </div>
 
-    <!-- Barra lateral derecha: métricas y motivación -->
-    <aside class="barra-lateral">
-      <h3>📊 Resumen de la semana</h3>
-      <ul>
-        <li>📞 <strong>{{ resumen.llamados }}</strong> llamados recibidos</li>
-        <li>🗓️ <strong>{{ resumen.entrevistas_agendadas }}</strong> entrevistas agendadas</li>
-        <li>✅ <strong>{{ resumen.entrevistas_realizadas }}</strong> entrevistas realizadas</li>
-        <li>🎉 <strong>{{ resumen.ofertas }}</strong> ofertas recibidas</li>
-      </ul>
 
-      <hr style="margin: 25px 0 15px 0;">
-      <h3>🌎 Impacto total de IMPULSO</h3>
-      <ul>
-        <li>📞 <strong>{{ total.llamados }}</strong> llamados registrados</li>
-        <li>🗓️ <strong>{{ total.entrevistas_agendadas }}</strong> entrevistas agendadas</li>
-        <li>✅ <strong>{{ total.entrevistas_realizadas }}</strong> entrevistas realizadas</li>
-        <li>🎉 <strong>{{ total.ofertas }}</strong> ofertas recibidas</li>
-      </ul>
-
-      <hr style="margin: 25px 0 15px 0;">
-      <p>“Cada paso es una victoria que te acerca.”</p>
-      <p>“Si otros avanzan, tú también puedes.”</p>
-      <div class="footer">Actualizado esta semana</div>
-    </aside>
 
   </div>
 
