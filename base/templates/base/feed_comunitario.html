@@ -75,26 +75,37 @@ body {
   margin-top: 4px;
 }
 
-/* --- IMÁGENES DEL FEED --- */
+/* --- Imagen estilo Instagram --- */
 .contenedor-imagen-feed {
   width: 100%;
-  max-width: 480px;
-  height: 280px;
-  overflow: hidden;
+  height: 500px; /* altura tipo Instagram */
   border-radius: 14px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  margin: 15px auto;
+  overflow: hidden;
+  margin: 18px 0;
+  background-color: #f2f2f2;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fafafa;
 }
 
+/* Imagen grande, centrada, recortada */
 .contenedor-imagen-feed img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* recorte suave tipo Instagram */
   border-radius: 14px;
+}
+
+/* En celulares: altura más alta para efecto “pantalla completa” */
+@media (max-width: 768px) {
+  .contenedor-imagen-feed {
+    height: 75vh; /* ocupa 75% de la pantalla del celular */
+    border-radius: 0; /* estilo Instagram real */
+  }
+
+  .contenedor-imagen-feed img {
+    border-radius: 0;
+  }
 }
 
 /* --- SIDEBAR DESPLEGABLE --- */
@@ -318,7 +329,7 @@ a:hover {
 
       {% for publicacion in publicaciones %}
         <div class="evento">
-          <div class="icono">📝</div>
+
           <div class="detalle">
             <strong>{{ publicacion.usuario.first_name|default:publicacion.usuario.username }}</strong> escribió:
             <span>“{{ publicacion.contenido }}”</span>
