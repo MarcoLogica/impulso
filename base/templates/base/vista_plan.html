@@ -408,21 +408,23 @@
   <script>
     document.querySelectorAll('.sortable-tareas').forEach(lista => {
       Sortable.create(lista, {
-        animation: 150,
-        onEnd: function (evt) {
-          const faseId = lista.dataset.faseId;
-          const ordenado = Array.from(lista.children).map(el => el.dataset.id);
+  animation: 150,
+  filter: ".boton-editar-tarea, .boton-eliminar-tarea, .boton-completar",
+  preventOnFilter: false,
+  onEnd: function (evt) {
+    const faseId = lista.dataset.faseId;
+    const ordenado = Array.from(lista.children).map(el => el.dataset.id);
 
-          fetch(`/tareas/reordenar/${faseId}/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({ orden: ordenado })
-          });
-        }
-      });
+    fetch(`/tareas/reordenar/${faseId}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify({ orden: ordenado })
+    });
+  }
+});
     });
   </script>
 </body>
