@@ -77,35 +77,17 @@ body {
 
 /* --- Imagen estilo Instagram --- */
 .contenedor-imagen-feed {
-  width: 100%;
-  height: 500px; /* altura tipo Instagram */
-  border-radius: 14px;
-  overflow: hidden;
-  margin: 18px 0;
-  background-color: #f2f2f2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 100%;
+    margin-top: 12px;
+    border-radius: 14px;
+    overflow: hidden;
 }
 
-/* Imagen grande, centrada, recortada */
 .contenedor-imagen-feed img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* recorte suave tipo Instagram */
-  border-radius: 14px;
-}
-
-/* En celulares: altura más alta para efecto “pantalla completa” */
-@media (max-width: 768px) {
-  .contenedor-imagen-feed {
-    height: 75vh; /* ocupa 75% de la pantalla del celular */
-    border-radius: 0; /* estilo Instagram real */
-  }
-
-  .contenedor-imagen-feed img {
-    border-radius: 0;
-  }
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
 }
 
 /* --- SIDEBAR DESPLEGABLE --- */
