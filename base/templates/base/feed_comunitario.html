@@ -267,122 +267,202 @@ a:hover {
   z-index: 3000 !important;
 }
 
+    .acciones-publicacion {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.btn-editar-publicacion,
+.btn-eliminar-publicacion {
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.btn-editar-publicacion {
+    background: #ffd966;
+    color: #333;
+}
+
+.btn-eliminar-publicacion {
+    background: #ff6b6b;
+    color: white;
+}
+
+
+    .menu-publicacion {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px 8px;
+  color: #666;
+}
+
+.menu-opciones {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 28px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 8px 0;
+  z-index: 20;
+  min-width: 140px;
+}
+
+.menu-opciones a {
+  display: block;
+  padding: 8px 14px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+}
+
+.menu-opciones a:hover {
+  background: #f5f5f5;
+}
+
+   .evento {
+  position: relative;
+}
+
+.menu-publicacion {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 999;
+}
+
   </style>
 </head>
 <body>
 
 <div id="toggle-sidebar" class="toggle-sidebar">☰</div>
 
-  <div class="container">
+<div class="container">
 
-    <!-- Barra lateral izquierda: herramientas -->
+  <!-- Barra lateral izquierda: herramientas -->
+  <aside class="barra-lateral" id="sidebar">
+    <h3>🛠️ Herramientas de IMPULSO</h3>
 
-    <aside class="barra-lateral" id="sidebar">
-      <h3>🛠️ Herramientas de IMPULSO</h3>
+    {% if user.is_authenticated %}
+      <div style="background-color:#ecf0f1; padding:10px 12px; margin-bottom:10px; border-radius:8px;">
+        👋 Hola, <strong>{{ user.first_name|default:user.username }}</strong><br>
+        <form action="{% url 'logout' %}" method="post" style="margin-top:6px;">
+          {% csrf_token %}
+          <button type="submit" style="background:none; border:none; color:#e74c3c; cursor:pointer; padding:0;">
+            🚪 Cerrar sesión
+          </button>
+        </form>
+      </div>
+    {% endif %}
 
-      {% if user.is_authenticated %}
-        <div style="background-color:#ecf0f1; padding:10px 12px; margin-bottom:10px; border-radius:8px;">
-          👋 Hola, <strong>{{ user.first_name|default:user.username }}</strong><br>
-          <form action="{% url 'logout' %}" method="post" style="margin-top:6px;">
-            {% csrf_token %}
-            <button type="submit" style="background:none; border:none; color:#e74c3c; cursor:pointer; padding:0;">
-              🚪 Cerrar sesión
-            </button>
-          </form>
+    <a href="{% url 'lista_iniciativas' %}" class="boton-nav">
+      <span style="font-size: 1.4em; margin-right: 6px;">📋</span> Dale vida a lo invisible
+    </a>
+
+    <a href="{% url 'feed_comunitario' %}" class="boton-nav">
+      <span style="font-size: 1.4em; margin-right: 6px;">🧭</span> Gestiona y comparte la carga
+    </a>
+
+    <a href="{% url 'lista_procesos' %}" class="boton-nav">
+      <span style="font-size: 1.4em; margin-right: 6px;">🧭</span> Mis cargas asignadas
+    </a>
+
+    <a href="{% url 'gantt_general' %}" class="boton-nav">
+      <span style="font-size: 1.4em; margin-right: 6px;">🗂️</span> Mapa mental de maternidad
+    </a>
+
+    <a href="/agenda/mia/" class="boton-nav">
+      <span style="font-size: 1.4em; margin-right: 6px;">📅</span> Mi Agenda
+    </a>
+
+    <a href="{% url 'panel_metas_usuario' %}" class="boton-nav">
+      <span style="font-size: 1.4em; margin-right: 6px;">🎯</span> Módulo emocional
+    </a>
+
+    <a href="{% url 'publicar_en_feed' %}" class="boton-nav" style="background-color:#2ecc71; color:white;">
+      <span style="font-size: 1.4em; margin-right: 6px;">📝</span> Publicar en el Feed
+    </a>
+
+  </aside>
+
+  <!-- Feed principal -->
+  <div class="feed">
+
+    {% for publicacion in publicaciones %}
+    <div class="evento" style="position: relative;">
+
+      <div class="detalle">
+        <strong>{{ publicacion.usuario.first_name|default:publicacion.usuario.username }}</strong> escribió:
+        <span>“{{ publicacion.contenido }}”</span>
+
+        {% if publicacion.imagen %}
+        <div class="contenedor-imagen-feed">
+          <img src="{{ publicacion.imagen.url }}" alt="Imagen publicada">
         </div>
+        {% endif %}
+
+        <div style="margin-top: 10px;">
+          💚 <a href="{% url 'dar_reaccion' publicacion.id 'me_gusta' %}">Me gusta ({{ publicacion.me_gusta.count }})</a> ·
+          🎯 <a href="{% url 'dar_reaccion' publicacion.id 'animo' %}">Ánimo ({{ publicacion.animo.count }})</a> ·
+          💪 <a href="{% url 'dar_reaccion' publicacion.id 'fuerza' %}">Fuerza ({{ publicacion.fuerza.count }})</a> ·
+          🙌 <a href="{% url 'dar_reaccion' publicacion.id 'tu_puedes' %}">Tú puedes ({{ publicacion.tu_puedes.count }})</a> ·
+          🎉 <a href="{% url 'dar_reaccion' publicacion.id 'felicidades' %}">Felicidades ({{ publicacion.felicidades.count }})</a>
+        </div>
+
+        <span style="font-size: 0.8em; color: #888;">{{ publicacion.creado_en|date:"d M Y" }}</span>
+      </div>
+
+      {% if publicacion.usuario.id == request.user.id %}
+      <!-- Menú de tres puntitos -->
+      <div class="menu-publicacion" style="position:absolute; top:10px; right:10px; z-index:999;">
+        <button class="menu-toggle">⋯</button>
+
+        <div class="menu-opciones">
+          <a href="{% url 'editar_publicacion' publicacion.id %}">✏️ Editar</a>
+          <a href="{% url 'eliminar_publicacion' publicacion.id %}"
+             onclick="return confirm('¿Eliminar esta publicación?')">🗑️ Eliminar</a>
+        </div>
+      </div>
       {% endif %}
 
-      <a href="{% url 'lista_iniciativas' %}" class="boton-nav">
-        <span style="font-size: 1.4em; margin-right: 6px;">📋</span> Dale vida a lo invisible
-      </a>
-
-       <a href="{% url 'feed_comunitario' %}" class="boton-nav">
-        <span style="font-size: 1.4em; margin-right: 6px;">🧭</span> Gestiona y comparte la carga
-      </a>
-
-      <a href="{% url 'lista_procesos' %}" class="boton-nav">
-        <span style="font-size: 1.4em; margin-right: 6px;">🧭</span> Mis cargas asignadas
-      </a>
-
-      <a href="{% url 'gantt_general' %}" class="boton-nav">
-        <span style="font-size: 1.4em; margin-right: 6px;">🗂️</span> Mapa mental de maternidad
-      </a>
-
-      <a href="/agenda/mia/" class="boton-nav">
-        <span style="font-size: 1.4em; margin-right: 6px;">📅</span> Mi Agenda
-      </a>
-
-      <a href="{% url 'panel_metas_usuario' %}" class="boton-nav">
-        <span style="font-size: 1.4em; margin-right: 6px;">🎯</span> Módulo emocional
-      </a>
-
-      <a href="{% url 'publicar_en_feed' %}" class="boton-nav" style="background-color:#2ecc71; color:white;">
-        <span style="font-size: 1.4em; margin-right: 6px;">📝</span> Publicar en el Feed
-      </a>
-
-
-
-    </aside>
-
-    <!-- Feed principal -->
-    <div class="feed">
-
-      {% for publicacion in publicaciones %}
-        <div class="evento">
-
-          <div class="detalle">
-            <strong>{{ publicacion.usuario.first_name|default:publicacion.usuario.username }}</strong> escribió:
-            <span>“{{ publicacion.contenido }}”</span>
-
-            {% if publicacion.imagen %}
-            <div class="contenedor-imagen-feed">
-              <img src="{{ publicacion.imagen.url }}" alt="Imagen publicada">
-            </div>
-            {% endif %}
-
-            <div style="margin-top: 10px;">
-              💚 <a href="{% url 'dar_reaccion' publicacion.id 'me_gusta' %}">Me gusta ({{ publicacion.me_gusta.count }})</a> ·
-              🎯 <a href="{% url 'dar_reaccion' publicacion.id 'animo' %}">Ánimo ({{ publicacion.animo.count }})</a> ·
-              💪 <a href="{% url 'dar_reaccion' publicacion.id 'fuerza' %}">Fuerza ({{ publicacion.fuerza.count }})</a> ·
-              🙌 <a href="{% url 'dar_reaccion' publicacion.id 'tu_puedes' %}">Tú puedes ({{ publicacion.tu_puedes.count }})</a> ·
-              🎉 <a href="{% url 'dar_reaccion' publicacion.id 'felicidades' %}">Felicidades ({{ publicacion.felicidades.count }})</a>
-            </div>
-
-            <span style="font-size: 0.8em; color: #888;">{{ publicacion.creado_en|date:"d M Y" }}</span>
-          </div>
-        </div>
-      {% endfor %}
-
-      {% if eventos %}
-        {% for evento in eventos %}
-        <div class="evento">
-          <div class="icono">
-            {% if evento.tipo_evento == 'llamada' %}📞
-            {% elif evento.tipo_evento == 'entrevista_agendada' %}🗓️
-            {% elif evento.tipo_evento == 'entrevista_realizada' %}✅
-            {% elif evento.tipo_evento == 'oferta' %}🎉
-            {% endif %}
-          </div>
-          <div class="detalle">
-            <strong>{{ evento.usuario.first_name|default:evento.usuario.username }}</strong>
-            registró un avance: <em>{{ evento.get_tipo_evento_display }}</em> con <strong>{{ evento.empresa }}</strong>.
-            <span>{{ evento.fecha_evento }}</span>
-            {% if evento.comentario %}
-              <span>💬 "{{ evento.comentario }}"</span>
-            {% endif %}
-          </div>
-        </div>
-        {% endfor %}
-      {% else %}
-        <p style="text-align:center;">Aún no se han publicado avances. ¡Tu registro podría inspirar a otros! 🚀</p>
-      {% endif %}
-
-      <a href="{% url 'registrar_evento' %}" class="volver">➕ Registrar mi propio avance</a>
     </div>
+    {% endfor %}
 
+    {% if eventos %}
+      {% for evento in eventos %}
+      <div class="evento">
+        <div class="icono">
+          {% if evento.tipo_evento == 'llamada' %}📞
+          {% elif evento.tipo_evento == 'entrevista_agendada' %}🗓️
+          {% elif evento.tipo_evento == 'entrevista_realizada' %}✅
+          {% elif evento.tipo_evento == 'oferta' %}🎉
+          {% endif %}
+        </div>
+        <div class="detalle">
+          ...
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p style="text-align:center;">Aún no se han publicado avances. ¡Tu registro podría inspirar a otros! 🚀</p>
+    {% endif %}
 
-
+    <a href="{% url 'registrar_evento' %}" class="volver">➕ Registrar mi propio avance</a>
   </div>
+
+</div>
 
 <script>
   const sidebar = document.getElementById("sidebar");
@@ -391,6 +471,25 @@ a:hover {
   toggle.addEventListener("click", () => {
     sidebar.classList.toggle("activa");
   });
+</script>
+
+<!-- Script del menú de tres puntitos -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll(".menu-toggle").forEach(boton => {
+    boton.addEventListener("click", function(e) {
+      e.stopPropagation();
+      const menu = this.nextElementSibling;
+      const abierto = menu.style.display === "block";
+      document.querySelectorAll(".menu-opciones").forEach(m => m.style.display = "none");
+      menu.style.display = abierto ? "none" : "block";
+    });
+  });
+
+  document.addEventListener("click", function() {
+    document.querySelectorAll(".menu-opciones").forEach(m => m.style.display = "none");
+  });
+});
 </script>
 
 </body>

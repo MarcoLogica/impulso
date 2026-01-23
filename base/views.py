@@ -169,7 +169,8 @@ def upload_image(request):
 
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
+
 
 @csrf_exempt  # Exime la protección CSRF para pruebas, no se recomienda en producción
 def administrador(request):
@@ -1867,3 +1868,28 @@ def panel_avance(request):
     }
 
     return render(request, 'base/panel_avance.html', context)
+
+
+@login_required
+def editar_publicacion(request, pk):
+    publicacion = get_object_or_404(PublicacionFeed, pk=pk)
+
+    if publicacion.usuario != request.user:
+        return HttpResponseForbidden("No puedes editar esta publicación.")
+
+    if request.method == "POST":
+        publicacion.contenido = request.POST.get("contenido")
+        publicacion.save()
+        return redirect('feed_comunitario')
+
+    return render(request, "editar_publicacion.html", {"publicacion": publicacion})
+
+@login_required
+def eliminar_publicacion(request, pk):
+    publicacion = get_object_or_404(PublicacionFeed, pk=pk)
+
+    if publicacion.usuario != request.user:
+        return HttpResponseForbidden("No puedes eliminar esta publicación.")
+
+    publicacion.delete()
+    return redirect('feed_comunitario')

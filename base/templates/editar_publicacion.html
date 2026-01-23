@@ -1,0 +1,114 @@
+
+{% load static %}
+
+{% block content %}
+
+<div class="editar-wrapper">
+
+    <div class="editar-card">
+
+        <h2 class="editar-titulo">Editar publicación</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label for="contenido" class="editar-label">Contenido</label>
+            <textarea id="contenido" name="contenido" class="editar-textarea" required>{{ publicacion.contenido }}</textarea>
+
+            <div class="editar-botones">
+                <a href="{% url 'feed_comunitario' %}" class="btn-cancelar">Cancelar</a>
+                <button type="submit" class="btn-guardar">Guardar cambios</button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+<style>
+
+.editar-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.editar-card {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
+
+.editar-titulo {
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.editar-label {
+    display: block;
+    font-size: 0.95em;
+    margin-bottom: 6px;
+    color: #34495e;
+}
+
+.editar-textarea {
+    width: 100%;
+    min-height: 140px;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #dcdde1;
+    font-size: 1em;
+    resize: vertical;
+    outline: none;
+    transition: border 0.2s ease;
+}
+
+.editar-textarea:focus {
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 2px rgba(46,204,113,0.15);
+}
+
+.editar-botones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn-cancelar {
+    padding: 10px 18px;
+    background: #bdc3c7;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.95em;
+    transition: background 0.2s ease;
+}
+
+.btn-cancelar:hover {
+    background: #a5acb0;
+}
+
+.btn-guardar {
+    padding: 10px 18px;
+    background: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-guardar:hover {
+    background: #27ae60;
+}
+
+</style>
+
+{% endblock %}
