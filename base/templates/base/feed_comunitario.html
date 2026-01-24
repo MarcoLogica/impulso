@@ -64,15 +64,31 @@ body {
   font-size: 1.8em;
 }
 
+/* --- AJUSTES DE TEXTO ESTILO INSTAGRAM/TIKTOK --- */
 .detalle strong {
   color: #4a4f63;
+  font-size: 1.06rem; /* ~17px */
+  font-weight: 600;
 }
 
 .detalle span {
   display: block;
-  font-size: 0.85em;
-  color: #6d7280;
-  margin-top: 4px;
+  font-size: 1.06rem; /* ~17px */
+  line-height: 1.45;
+  color: #2d3436;
+  margin-top: 6px;
+}
+
+/* Reacciones */
+.detalle a {
+  font-size: 0.95rem; /* ~15px */
+  color: #4a4f63;
+}
+
+/* Fecha (suave y secundaria) */
+.detalle span[style] {
+  font-size: 0.85rem !important; /* ~14px */
+  color: #7f8c8d !important;
 }
 
 /* --- Imagen estilo Instagram --- */
@@ -91,8 +107,6 @@ body {
 }
 
 /* --- SIDEBAR DESPLEGABLE --- */
-
-/* Sidebar completamente oculto */
 .barra-lateral {
   position: fixed;
   left: -300px;
@@ -100,15 +114,12 @@ body {
   height: 100vh;
   width: 260px;
   padding: 30px 22px;
-
-  /* Fondo suave maternal */
   background: linear-gradient(
     180deg,
     #e8e6f7 0%,
     #f4dde1 50%,
     #dce7f3 100%
   );
-
   backdrop-filter: blur(14px);
   border-right: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 4px 0 18px rgba(0,0,0,0.08);
@@ -118,12 +129,10 @@ body {
   border-radius: 0 16px 16px 0;
 }
 
-/* Sidebar visible */
 .barra-lateral.activa {
   left: 0;
 }
 
-/* Pestaña visible siempre */
 .toggle-sidebar {
   position: fixed;
   left: 0;
@@ -145,7 +154,6 @@ body {
   transform: translateY(-50%) scale(1.05);
 }
 
-/* Botones internos del sidebar — alineados a la izquierda */
 .boton-nav {
   background: white;
   color: #4a4f63;
@@ -154,10 +162,10 @@ body {
   font-weight: 600;
   width: 100%;
   margin: 12px auto;
-  text-align: left; /* ← aquí está el cambio */
+  text-align: left;
   display: flex;
   align-items: center;
-  gap: 10px; /* espacio entre icono y texto */
+  gap: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   border: 1px solid #e5e7eb;
@@ -168,32 +176,27 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   background: #f9f9ff;
 }
-    /* Quitar subrayado a todos los links */
+
 a {
   text-decoration: none;
 }
 
-/* Hover suave y elegante */
 a:hover {
   text-decoration: none;
   opacity: 0.85;
 }
 
-    /* --- FEED RESPONSIVO SEGÚN ESTADO DEL SIDEBAR --- */
-
-/* Feed ocupa todo el ancho cuando el sidebar está oculto */
+/* --- FEED RESPONSIVO --- */
 .feed {
   max-width: 1100px;
   margin: 0 auto;
   transition: margin-left 0.35s ease;
 }
 
-/* Cuando el sidebar está abierto, el feed se desplaza suavemente */
 .barra-lateral.activa ~ .feed {
-  margin-left: 260px; /* mismo ancho del sidebar */
+  margin-left: 260px;
 }
 
-/* En pantallas pequeñas, el feed siempre ocupa todo el ancho */
 @media (max-width: 768px) {
   .feed {
     margin-left: 0 !important;
@@ -206,37 +209,32 @@ a:hover {
   }
 }
 
-    /* --- FEED SIEMPRE FULL WIDTH --- */
-/* Feed más ancho y respirado */
+/* --- FEED FULL WIDTH --- */
 .feed {
   width: 100%;
-  max-width: 1800px; /* antes 900 o 1100 */
+  max-width: 1800px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* Aseguramos que el feed nunca se mueva */
 .barra-lateral.activa ~ .feed {
   margin-left: 0 !important;
 }
 
-/* Sidebar flotante sobre el feed */
 .barra-lateral {
   position: fixed;
   top: 0;
-  left: -300px; /* oculto completamente */
+  left: -300px;
   height: 100vh;
   width: 260px;
-  z-index: 2000; /* por encima del feed */
+  z-index: 2000;
   transition: left 0.35s ease;
 }
 
-/* Cuando se abre, aparece sobre el feed */
 .barra-lateral.activa {
   left: 0;
 }
 
-/* En móviles, igual: feed siempre full width */
 @media (max-width: 768px) {
   .feed {
     width: 100%;
@@ -244,37 +242,36 @@ a:hover {
     padding: 0 12px;
   }
 }
-    /* Aseguramos que la pestaña esté SIEMPRE encima del sidebar */
+
 .toggle-sidebar {
   z-index: 3000 !important;
 }
 
-    .acciones-publicacion {
-    display: flex;
-    gap: 10px;
-    margin-top: 5px;
+.acciones-publicacion {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
 }
 
 .btn-editar-publicacion,
 .btn-eliminar-publicacion {
-    font-size: 14px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    text-decoration: none;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-decoration: none;
 }
 
 .btn-editar-publicacion {
-    background: #ffd966;
-    color: #333;
+  background: #ffd966;
+  color: #333;
 }
 
 .btn-eliminar-publicacion {
-    background: #ff6b6b;
-    color: white;
+  background: #ff6b6b;
+  color: white;
 }
 
-
-    .menu-publicacion {
+.menu-publicacion {
   position: relative;
   display: inline-block;
 }
@@ -314,7 +311,7 @@ a:hover {
   background: #f5f5f5;
 }
 
-   .evento {
+.evento {
   position: relative;
 }
 
@@ -325,7 +322,7 @@ a:hover {
   z-index: 999;
 }
 
-  </style>
+</style>
 </head>
 <body>
 
