@@ -266,8 +266,61 @@
 .boton-replicar:hover {
   background-color: #3498db; /* azul más intenso al pasar el mouse */
 }
+
+   /* --- SIDEBAR DESPLEGABLE A LA DERECHA --- */
+.barra-lateral {
+  position: fixed;
+  right: -300px;          /* OCULTA POR DEFECTO */
+  top: 0;
+  height: 100vh;
+  width: 260px;
+  padding: 30px 22px;
+  background: linear-gradient(
+    180deg,
+    #e8e6f7 0%,
+    #f4dde1 50%,
+    #dce7f3 100%
+  );
+  backdrop-filter: blur(14px);
+  border-left: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: -4px 0 18px rgba(0,0,0,0.08);
+  transition: right 0.35s ease;
+  z-index: 2000;
+  overflow-y: auto;
+  border-radius: 16px 0 0 16px;
+}
+
+.barra-lateral.activa {
+  right: 0;               /* SE DESPLIEGA HACIA LA IZQUIERDA */
+}
+
+/* Pestaña lateral derecha */
+.toggle-sidebar {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #a7b4d8;
+  color: white;
+  padding: 12px 14px;
+  border-radius: 12px 0 0 12px;
+  cursor: pointer;
+  font-size: 1.3em;
+  z-index: 3000;
+  box-shadow: -2px 2px 10px rgba(0,0,0,0.15);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.toggle-sidebar:hover {
+  background: #8d9ac7;
+  transform: translateY(-50%) scale(1.05);
+}
+
+
+
   </style>
 </head>
+
 <body>
   <div class="layout">
 
@@ -335,74 +388,94 @@
       {% endfor %}
     </div>
 
-    <!-- 📊 Panel lateral -->
-    <div class="panel-lateral">
-      <h4>📊 Resumen operativo</h4>
-      <ul>
-        <li>📋 <strong>Tareas totales:</strong> {{ total_tareas }}</li>
-        <li>✅ <strong>Completadas:</strong> {{ tareas_completadas }}</li>
-        <li>⏳ <strong>Pendientes:</strong> {{ tareas_pendientes }}</li>
-        <li>🚨 <strong>Retrasadas:</strong> {{ tareas_retrasadas }}</li>
-        <li>🧱 <strong>Fases del plan:</strong> {{ total_fases }}</li>
-      </ul>
 
-      <hr>
 
-      <h4>📅 Progreso temporal</h4>
-      <ul>
-        <li>📆 <strong>Fin estimado:</strong>
-          {% if fecha_fin_estimada %}
-            {{ fecha_fin_estimada|date:"d M Y" }}
-          {% else %}
-            Sin tareas agendadas
-          {% endif %}
-        </li>
-        <li>📅 <strong>Días restantes:</strong>
-          {% if dias_restantes != None %}
-            {{ dias_restantes }}
-          {% else %}
-            –
-          {% endif %}
-        </li>
-      </ul>
 
-      <hr>
 
-      <h4>🔥 Dinámica reciente</h4>
-      <ul>
-        <li>🟢 <strong>Última completada:</strong><br>
-          {% if ultima_tarea_completada %}
-            {{ ultima_tarea_completada.nombre }} ({{ ultima_tarea_completada.fecha_completada|date:"j M Y" }})
-          {% else %}
-            Nada completado aún
-          {% endif %}
-        </li>
-        <li>📈 <strong>Avance semanal:</strong> {{ avance_semanal }} tareas</li>
-        <li>🔥 <strong>Fase más activa:</strong><br>
-          {% if fase_mas_activa %}
-            {{ fase_mas_activa.icono }} {{ fase_mas_activa.nombre }}
-          {% else %}
-            – Ninguna aún
-          {% endif %}
-        </li>
-        <li>🎯 <strong>Próxima tarea:</strong><br>
-          {% if proxima_tarea %}
-            {{ proxima_tarea.nombre }} ({{ proxima_tarea.fecha_inicio|date:"j M Y" }})
-          {% else %}
-            Nada pendiente
-          {% endif %}
-        </li>
-      </ul>
+<!-- 📊 Pestaña lateral derecha -->
+<div class="toggle-sidebar" id="toggleSidebar">📊</div>
 
-      <hr>
-      <p class="motivacion">{{ mensaje_motivacional }}</p>
+<!-- 📊 Barra lateral derecha desplegable -->
+<aside class="barra-lateral" id="barraLateral">
+  <h3>📊 Resumen operativo</h3>
+  <ul>
+    <li>📋 <strong>Tareas totales:</strong> {{ total_tareas }}</li>
+    <li>✅ <strong>Completadas:</strong> {{ tareas_completadas }}</li>
+    <li>⏳ <strong>Pendientes:</strong> {{ tareas_pendientes }}</li>
+    <li>🚨 <strong>Retrasadas:</strong> {{ tareas_retrasadas }}</li>
+    <li>🧱 <strong>Fases del plan:</strong> {{ total_fases }}</li>
+  </ul>
 
-      <hr>
-      <h4>🗺️ Vista global</h4>
-      <a href="{% url 'gantt_general' %}" class="boton-gantt">📅 Ir al Gantt general</a>
-    </div>
+  <hr>
 
-  </div>
+  <h3>📅 Progreso temporal</h3>
+  <ul>
+    <li>📆 <strong>Fin estimado:</strong>
+      {% if fecha_fin_estimada %}
+        {{ fecha_fin_estimada|date:"d M Y" }}
+      {% else %}
+        Sin tareas agendadas
+      {% endif %}
+    </li>
+    <li>📅 <strong>Días restantes:</strong>
+      {% if dias_restantes != None %}
+        {{ dias_restantes }}
+      {% else %}
+        –
+      {% endif %}
+    </li>
+  </ul>
+
+  <hr>
+
+  <h3>🔥 Dinámica reciente</h3>
+  <ul>
+    <li>🟢 <strong>Última completada:</strong><br>
+      {% if ultima_tarea_completada %}
+        {{ ultima_tarea_completada.nombre }} ({{ ultima_tarea_completada.fecha_completada|date:"j M Y" }})
+      {% else %}
+        Nada completado aún
+      {% endif %}
+    </li>
+    <li>📈 <strong>Avance semanal:</strong> {{ avance_semanal }} tareas</li>
+    <li>🔥 <strong>Fase más activa:</strong><br>
+      {% if fase_mas_activa %}
+        {{ fase_mas_activa.icono }} {{ fase_mas_activa.nombre }}
+      {% else %}
+        – Ninguna aún
+      {% endif %}
+    </li>
+    <li>🎯 <strong>Próxima tarea:</strong><br>
+      {% if proxima_tarea %}
+        {{ proxima_tarea.nombre }} ({{ proxima_tarea.fecha_inicio|date:"j M Y" }})
+      {% else %}
+        Nada pendiente
+      {% endif %}
+    </li>
+  </ul>
+
+  <hr>
+  <p class="motivacion">{{ mensaje_motivacional }}</p>
+
+  <hr>
+  <h3>🗺️ Vista global</h3>
+  <a href="{% url 'gantt_general' %}" class="boton-nav">📅 Ir al Gantt general</a>
+</aside>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleBtn = document.getElementById("toggleSidebar");
+  const sidebar = document.getElementById("barraLateral");
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("activa");
+  });
+});
+</script>
+
+
+
 
   <!-- 🔃 Script para drag & drop -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
@@ -431,5 +504,12 @@
     });
   });
 </script>
+
+  </div>
+
+
+
 </body>
+
+
 </html>
