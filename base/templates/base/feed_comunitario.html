@@ -7,7 +7,7 @@
   <p>Maternidad visible... criando en comunidad...</p>
 </div>
   <style>
-  /* --- RESET PARA EVITAR QUE EL SIDEBAR SE VEA --- */
+ /* --- RESET --- */
 body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #DAE4E8;
@@ -44,8 +44,11 @@ body {
 
 /* --- FEED --- */
 .feed {
-  max-width: 900px;
+  width: 100%;
+  max-width: 1800px;
   margin: 0 auto;
+  padding: 0 20px;
+  transition: margin-left 0.35s ease;
 }
 
 /* --- EVENTOS --- */
@@ -58,73 +61,67 @@ body {
   display: flex;
   gap: 20px;
   align-items: center;
+  position: relative;
 }
 
 .icono {
   font-size: 1.8rem;
 }
 
-/* --- AJUSTES DE TEXTO ESTILO INSTAGRAM/TIKTOK --- */
+/* --- TEXTO ESTILO APP --- */
 .detalle strong {
   color: #4a4f63;
-  font-size: 2rem; /* ~17px */
+  font-size: 2rem;
   font-weight: 600;
 }
 
 .detalle span {
   display: block;
-  font-size: 2rem; /* ~17px */
+  font-size: 2rem;
   line-height: 1.45;
   color: #2d3436;
   margin-top: 6px;
 }
 
-/* Reacciones */
 .detalle a {
-  font-size: 1.5rem; /* ~15px */
+  font-size: 1.5rem;
   color: #4a4f63;
 }
 
-/* Fecha (suave y secundaria) */
 .detalle span[style] {
-  font-size: 1rem !important; /* ~14px */
+  font-size: 1rem !important;
   color: #7f8c8d !important;
 }
 
-/* --- Imagen estilo Instagram --- */
+/* --- IMAGEN FEED --- */
 .contenedor-imagen-feed {
-    width: 100%;
-    margin-top: 12px;
-    border-radius: 14px;
-    overflow: hidden;
+  width: 100%;
+  margin-top: 12px;
+  border-radius: 14px;
+  overflow: hidden;
 }
 
 .contenedor-imagen-feed img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
 }
 
-/* --- SIDEBAR DESPLEGABLE --- */
+/* --- SIDEBAR IZQUIERDA DESPLEGABLE --- */
 .barra-lateral {
   position: fixed;
-  left: -300px;
+  left: -570px;
   top: 0;
   height: 100vh;
-  width: 260px;
-  padding: 30px 22px;
-  background: linear-gradient(
-    180deg,
-    #e8e6f7 0%,
-    #f4dde1 50%,
-    #dce7f3 100%
-  );
+  width: 500px; /* MÁS ANCHA */
+  padding: 40px 28px; /* MÁS ESPACIO */
+  background: linear-gradient(180deg, #e8e6f7 0%, #f4dde1 50%, #dce7f3 100%);
   backdrop-filter: blur(14px);
   border-right: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 4px 0 18px rgba(0,0,0,0.08);
   transition: left 0.35s ease;
-  z-index: 1000;
+  z-index: 2000;
   overflow-y: auto;
   border-radius: 0 16px 16px 0;
 }
@@ -133,6 +130,7 @@ body {
   left: 0;
 }
 
+/* Pestaña */
 .toggle-sidebar {
   position: fixed;
   left: 0;
@@ -140,11 +138,11 @@ body {
   transform: translateY(-50%);
   background: #a7b4d8;
   color: white;
-  padding: 12px 14px;
+  padding: 14px 16px;
   border-radius: 0 12px 12px 0;
   cursor: pointer;
-  font-size: 1.3em;
-  z-index: 1101;
+  font-size: 1.6rem; /* MÁS GRANDE */
+  z-index: 3000;
   box-shadow: 2px 2px 10px rgba(0,0,0,0.15);
   transition: background 0.2s ease, transform 0.2s ease;
 }
@@ -154,21 +152,23 @@ body {
   transform: translateY(-50%) scale(1.05);
 }
 
+/* Botones del menú */
 .boton-nav {
   background: white;
   color: #4a4f63;
-  padding: 14px 16px;
-  border-radius: 12px;
-  font-weight: 600;
-  width: 100%;
-  margin: 12px auto;
+  padding: 20px 22px; /* MÁS GRANDE */
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.6rem; /* ~24px */
+  width: 90%;
+  margin: 16px auto;
   text-align: left;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px; /* MÁS ESPACIO */
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
   border: 1px solid #e5e7eb;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .boton-nav:hover {
@@ -177,76 +177,45 @@ body {
   background: #f9f9ff;
 }
 
-a {
-  text-decoration: none;
+/* Íconos dentro del menú */
+.boton-nav i,
+.boton-nav span,
+.boton-nav .icono {
+  font-size: 2rem; /* ÍCONOS GRANDES */
 }
 
-a:hover {
-  text-decoration: none;
-  opacity: 0.85;
-}
-
-/* --- FEED RESPONSIVO --- */
-.feed {
-  max-width: 1100px;
-  margin: 0 auto;
-  transition: margin-left 0.35s ease;
-}
-
-.barra-lateral.activa ~ .feed {
-  margin-left: 260px;
-}
-
+/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
+
+  .barra-lateral {
+    width: 300px;
+    padding: 42px 30px;
+  }
+
+  .boton-nav {
+    font-size: 1.8rem; /* ~28px */
+    padding: 22px 24px;
+    gap: 20px;
+  }
+
+  .boton-nav i,
+  .boton-nav span,
+  .boton-nav .icono {
+    font-size: 2.4rem;
+  }
+
+  .toggle-sidebar {
+    font-size: 1.8rem;
+    padding: 16px 18px;
+  }
+
   .feed {
     margin-left: 0 !important;
-    max-width: 100%;
-    padding: 0 10px;
-  }
-
-  .barra-lateral.activa ~ .feed {
-    margin-left: 0;
-  }
-}
-
-/* --- FEED FULL WIDTH --- */
-.feed {
-  width: 100%;
-  max-width: 1800px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.barra-lateral.activa ~ .feed {
-  margin-left: 0 !important;
-}
-
-.barra-lateral {
-  position: fixed;
-  top: 0;
-  left: -300px;
-  height: 100vh;
-  width: 260px;
-  z-index: 2000;
-  transition: left 0.35s ease;
-}
-
-.barra-lateral.activa {
-  left: 0;
-}
-
-@media (max-width: 768px) {
-  .feed {
-    width: 100%;
-    max-width: 100%;
     padding: 0 12px;
   }
 }
 
-.toggle-sidebar {
-  z-index: 3000 !important;
-}
-
+/* --- ACCIONES PUBLICACIÓN --- */
 .acciones-publicacion {
   display: flex;
   gap: 10px;
@@ -271,9 +240,12 @@ a:hover {
   color: white;
 }
 
+/* --- MENÚ PUBLICACIÓN --- */
 .menu-publicacion {
-  position: relative;
-  display: inline-block;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 999;
 }
 
 .menu-toggle {
@@ -311,53 +283,45 @@ a:hover {
   background: #f5f5f5;
 }
 
-.evento {
-  position: relative;
+    /* --- AGRANDAR ENCABEZADO DEL SIDEBAR IZQUIERDO --- */
+
+.barra-lateral h2,
+.barra-lateral h3,
+.barra-lateral h4 {
+  font-size: 2rem !important;   /* Títulos grandes */
+  font-weight: 700 !important;
+  margin-bottom: 18px !important;
+  color: #2c3e50 !important;
 }
 
-.menu-publicacion {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 999;
+.barra-lateral .saludo,
+.barra-lateral .usuario,
+.barra-lateral p {
+  font-size: 3rem !important;  /* Texto del saludo */
+  font-weight: 600 !important;
+  margin-bottom: 14px !important;
+  color: #4a4f63 !important;
 }
 
-    /* --- TIPOGRAFÍA Y ESPACIADO PARA MÓVILES EN LA BARRA LATERAL IZQUIERDA --- */
-@media (max-width: 768px) {
-
-  /* Contenedor del sidebar */
-  .barra-lateral {
-    padding: 34px 26px;
-  }
-
-  /* Botones del menú */
-  .boton-nav {
-    font-size: 1.15rem; /* ~19px */
-    padding: 16px 18px;
-    gap: 14px;
-  }
-
-  /* Íconos dentro de los botones */
-  .boton-nav i,
-  .boton-nav span.emoji,
-  .boton-nav .icono {
-    font-size: 1.4rem; /* ~22px */
-  }
-
-  /* Títulos o secciones dentro del sidebar */
-  .barra-lateral h3,
-  .barra-lateral h4 {
-    font-size: 1.3rem; /* ~21px */
-  }
-
-  /* Texto secundario */
-  .barra-lateral p,
-  .barra-lateral small,
-  .barra-lateral li {
-    font-size: 1.05rem; /* ~17px */
-    line-height: 1.45;
-  }
+.barra-lateral .cerrar-sesion,
+.barra-lateral a.cerrar-sesion {
+  font-size: 3rem !important;  /* Botón cerrar sesión */
+  font-weight: 600 !important;
+  display: block;
+  margin-top: 10px;
+  color: #d9534f !important;
 }
+
+.barra-lateral .icono,
+.barra-lateral i,
+.barra-lateral span.emoji {
+  font-size: 2.2rem !important;  /* Íconos más grandes */
+}
+    a, a:visited, a:hover, a:active {
+  text-decoration: none !important;
+}
+
+
 
 </style>
 </head>
