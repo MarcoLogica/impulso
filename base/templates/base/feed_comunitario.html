@@ -322,6 +322,43 @@ a:hover {
   z-index: 999;
 }
 
+    /* --- TIPOGRAFÍA Y ESPACIADO PARA MÓVILES EN LA BARRA LATERAL IZQUIERDA --- */
+@media (max-width: 768px) {
+
+  /* Contenedor del sidebar */
+  .barra-lateral {
+    padding: 34px 26px;
+  }
+
+  /* Botones del menú */
+  .boton-nav {
+    font-size: 1.15rem; /* ~19px */
+    padding: 16px 18px;
+    gap: 14px;
+  }
+
+  /* Íconos dentro de los botones */
+  .boton-nav i,
+  .boton-nav span.emoji,
+  .boton-nav .icono {
+    font-size: 1.4rem; /* ~22px */
+  }
+
+  /* Títulos o secciones dentro del sidebar */
+  .barra-lateral h3,
+  .barra-lateral h4 {
+    font-size: 1.3rem; /* ~21px */
+  }
+
+  /* Texto secundario */
+  .barra-lateral p,
+  .barra-lateral small,
+  .barra-lateral li {
+    font-size: 1.05rem; /* ~17px */
+    line-height: 1.45;
+  }
+}
+
 </style>
 </head>
 <body>
