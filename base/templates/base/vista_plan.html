@@ -264,7 +264,7 @@
       border-radius: 6px;
       font-weight: bold;
       text-decoration: none;
-      font-size: 0.85em;
+      font-size: 2em;
     }
 
     .boton-rojo {
@@ -275,7 +275,7 @@
       border-radius: 6px;
       font-weight: bold;
       text-decoration: none;
-      font-size: 0.9em;
+      font-size: 2em;
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
       transition: background-color 0.2s;
     }
@@ -349,6 +349,12 @@
       background: #8d9ac7;
       transform: translateY(-50%) scale(1.05);
     }
+    .tarea-retrasada {
+  background-color: #ffdddd !important;
+  border-left: 8px solid #e74c3c !important;
+  box-shadow: 0 0 10px rgba(231, 76, 60, 0.4) !important;
+}
+
 
 </style>
 
@@ -395,7 +401,9 @@
           <!-- 🔃 Lista de tareas con drag & drop -->
           <ul id="lista-tareas-{{ fase.id }}" class="sortable-tareas" data-fase-id="{{ fase.id }}" style="list-style-type: none; padding-left: 0; margin-top: 10px;">
             {% for tarea in fase.tareas.all %}
-              <li class="tarea" data-id="{{ tarea.id }}">
+              <li class="tarea {% if tarea.retrasada %}tarea-retrasada{% endif %}">
+
+
                 {% if tarea.estado != 'completada' %}
                   <form method="post" action="{% url 'actualizar_estado_tarea' tarea.id %}" style="display: inline;">
                     {% csrf_token %}

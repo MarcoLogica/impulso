@@ -614,7 +614,6 @@ from django.utils import timezone
 from django.db.models import Prefetch
 from .models import Iniciativa, Fase, Tarea
 from .utils import calcular_avance_general, generar_mensaje_motivacional  # si usas funciones externas
-
 def vista_plan(request, iniciativa_id):
     hoy = timezone.now().date()
     iniciativa = get_object_or_404(Iniciativa, id=iniciativa_id, usuario=request.user)
@@ -627,11 +626,31 @@ def vista_plan(request, iniciativa_id):
 
     tareas = Tarea.objects.filter(fase__iniciativa=iniciativa)
 
+    # 🔥 AGREGADO: marcar tareas retrasadas dinámicamente
+    from datetime import timedelta
+    for fase in fases:
+        for tarea in fase.tareas.all():
+            if tarea.fecha_inicio:
+                fecha_objetivo = tarea.fecha_inicio + timedelta(days=tarea.duracion_dias)
+                tarea.retrasada = (
+                    tarea.estado != 'completada' and fecha_objetivo < hoy
+                )
+            else:
+                tarea.retrasada = False
+
     # KPIs principales
     total_tareas = tareas.count()
     tareas_completadas = tareas.filter(estado='completada').count()
     tareas_pendientes = tareas.exclude(estado='completada').count()
-    tareas_retrasadas = tareas.exclude(estado='completada').filter(fecha_inicio__lt=hoy).count()
+
+    # 🔥 KPI retrasadas basado en la misma lógica
+    tareas_retrasadas = sum(
+        1 for t in tareas
+        if t.estado != 'completada'
+        and t.fecha_inicio
+        and (t.fecha_inicio + timedelta(days=t.duracion_dias)) < hoy
+    )
+
     total_fases = fases.count()
 
     # Fecha fin estimada
