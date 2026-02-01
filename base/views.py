@@ -1329,18 +1329,38 @@ def panel_metas_usuario(request):
 
     iniciativas_data = []
 
+    # 🔥 Agrupamos por iniciativa
     for iniciativa in set(f.iniciativa for f in fases_con_meta):
-        lista_fases = [f for f in fases_con_meta if f.iniciativa == iniciativa]
-        total = len(lista_fases)
-        completadas = sum(1 for f in lista_fases if f.completado)
+
+        fases_lista = []
+
+        for fase in [f for f in fases_con_meta if f.iniciativa == iniciativa]:
+
+            # 🔥 TAREAS ACTIVAS ESTA SEMANA
+            tareas_semana = fase.tareas.filter(
+                fecha_inicio__gte=inicio_semana,
+                fecha_inicio__lte=fin_semana
+            ).order_by("fecha_inicio")
+
+            # 🔥 Convertimos la fase en diccionario
+            fases_lista.append({
+                "id": fase.id,
+                "nombre": fase.nombre,
+                "completado": fase.completado,
+                "reflexion": fase.reflexion,
+                "tareas": tareas_semana,   # ← AHORA SÍ FUNCIONA
+            })
+
+        total = len(fases_lista)
+        completadas = sum(1 for f in fases_lista if f["completado"])
         porcentaje = int((completadas / total) * 100) if total > 0 else 0
 
         iniciativas_data.append({
-            'iniciativa': iniciativa,
-            'fases': lista_fases,
-            'total': total,
-            'completadas': completadas,
-            'porcentaje': porcentaje
+            "iniciativa": iniciativa,
+            "fases": fases_lista,
+            "total": total,
+            "completadas": completadas,
+            "porcentaje": porcentaje
         })
 
     return render(request, 'base/panel_metas.html', {
@@ -1348,6 +1368,7 @@ def panel_metas_usuario(request):
         'inicio': inicio_semana,
         'fin': fin_semana
     })
+
 
 from django.shortcuts import get_object_or_404, redirect
 

@@ -378,7 +378,7 @@
       </div>
 
       {% for fase in fases %}
-        <div class="fase" style="border-left-color: {{ fase.color_hex }};">
+  <div id="fase-{{ fase.id }}" class="fase" style="border-left-color: {{ fase.color_hex }};">
           <div class="fase-cabecera">
             <h3 class="fase-nombre">
               <span class="fase-icono">{{ fase.icono }}</span>

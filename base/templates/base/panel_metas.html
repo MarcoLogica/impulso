@@ -20,17 +20,19 @@
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+       font-size: 30px;
     }
 
     h2 {
       margin-bottom: 10px;
-      font-size: 24px;
+      font-size: 40px;
     }
 
     .motivacion {
       font-style: italic;
       color: #7f8c8d;
       margin-bottom: 30px;
+
     }
 
     .bloque-iniciativa {
@@ -39,6 +41,7 @@
       padding: 18px;
       border-radius: 10px;
       margin-bottom: 30px;
+
     }
 
     .barra-progreso {
@@ -71,6 +74,7 @@
     .fase-item input[type="text"] {
       width: 90%;
       margin-top: 6px;
+       font-size: 30px;
     }
 
     .fase-item button {
@@ -82,6 +86,7 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+       font-size: 25px;
     }
 
     .fase-item label {
@@ -101,21 +106,22 @@
   <div class="contenedor">
     <h2>🎯 Metas activas esta semana ({{ inicio|date:"d M" }} - {{ fin|date:"d M" }})</h2>
     <p class="motivacion">“Cada paso esta semana cuenta. Impulsa tu avance y hazlo visible.” 💪</p>
+
     <div style="text-align: center; margin-top: 40px;">
-  <a href="{% url 'feed_comunitario' %}" style="
-    background-color: #2980b9;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1em;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: background 0.3s ease;
-  " onmouseover="this.style.backgroundColor='#3498db'" onmouseout="this.style.backgroundColor='#2980b9'">
-    ⬅️ Volver al feed comunitario
-  </a>
-</div>
+      <a href="{% url 'feed_comunitario' %}" style="
+        background-color: #2980b9;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1.1em;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: background 0.3s ease;
+      " onmouseover="this.style.backgroundColor='#3498db'" onmouseout="this.style.backgroundColor='#2980b9'">
+        ⬅️ Volver al feed comunitario
+      </a>
+    </div>
 
     {% if iniciativas_data %}
       {% for item in iniciativas_data %}
@@ -130,28 +136,84 @@
           <ul style="list-style:none; padding:0;">
             {% for fase in item.fases %}
               <li class="fase-item {% if fase.completado %}completed{% endif %}">
+
                 {% if fase.completado %}
                   ✔️ <strong>{{ fase.nombre }}</strong><br>
                   <small>Reflexión: {{ fase.reflexion|default:"Sin reflexión" }}</small>
+
                 {% else %}
                   ⏳ <strong>{{ fase.nombre }}</strong><br>
                   <form method="post" action="{% url 'completar_fase' fase.id %}">
                     {% csrf_token %}
+                    <button type="submit">✔️ Marcar como completada</button>
                     <input type="text" name="reflexion" placeholder="¿Cómo te sentiste?">
                     <label>
                       <input type="checkbox" name="publicar_en_feed" checked> Compartir en el feed
                     </label>
-                    <button type="submit">✔️ Marcar como completada</button>
+
+
                   </form>
                 {% endif %}
+
+
+                <!-- ⭐ DETALLE DE TAREAS DE LA SEMANA -->
+                {% if fase.tareas %}
+                  <ul style="margin-top:12px; padding-left:18px; list-style:none;">
+                    {% for tarea in fase.tareas %}
+                      <li style="
+                        background:#f4f9ff;
+                        padding:10px 12px;
+                        border-radius:8px;
+                        margin-bottom:8px;
+                        border-left:5px solid #85c1e9;
+                      ">
+                        <strong>{{ tarea.nombre }}</strong><br>
+                        <small>
+                          📅 {{ tarea.fecha_inicio|date:"d M" }}
+                          • ⏳ {{ tarea.duracion_dias }} días
+                          • Estado: <em>{{ tarea.get_estado_display }}</em>
+                        </small>
+                      </li>
+                    <a href="{% url 'vista_plan' item.iniciativa.id %}#fase-{{ fase.id }}"
+   style="
+     display:inline-block;
+     background:#8e44ad;
+     color:white;
+     padding:6px 14px;
+     border-radius:6px;
+     font-weight:bold;
+     text-decoration:none;
+     margin-top:8px;
+     margin-bottom:10px;
+     font-size:0.9em;
+     box-shadow:0 2px 6px rgba(0,0,0,0.1);
+   "
+   onmouseover="this.style.backgroundColor='#9b59b6'"
+   onmouseout="this.style.backgroundColor='#8e44ad'">
+   🚀 Avanzar con esta Fase
+</a>
+
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <p style="font-size:0.9em; color:#7f8c8d; margin-top:10px;">
+                    No hay tareas activas esta semana para esta fase.
+                  </p>
+                {% endif %}
+
               </li>
             {% endfor %}
           </ul>
+
+
         </div>
+
+
       {% endfor %}
     {% else %}
       <p>No hay metas activas para esta semana. Asegúrate de que tus fases tengan tareas con fechas esta semana o asigna una <strong>fecha objetivo</strong> manualmente 📆</p>
     {% endif %}
+
   </div>
 
 </body>
