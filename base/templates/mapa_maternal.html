@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mapa Mental de Maternidad – IMPULSO</title>
+<style>
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #f6f9fc, #eaf4ff);
+    margin: 0;
+    padding: 40px;
+    color: #34495e;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+
+  .subtitulo {
+    text-align: center;
+    font-style: italic;
+    color: #7f8c8d;
+    margin-bottom: 40px;
+  }
+
+  /* GRID PRINCIPAL */
+  .grid-dimensiones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+  }
+
+  /* TARJETA DE DIMENSIÓN */
+  .dimension {
+    background: white;
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    border-left: 8px solid #85c1e9;
+    transition: transform 0.2s ease;
+  }
+
+  .dimension:hover {
+    transform: translateY(-4px);
+  }
+
+  .dimension h2 {
+    margin: 0;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .barra-carga {
+    margin-top: 12px;
+    background: #e0e7ef;
+    height: 14px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .barra-interna {
+    height: 100%;
+    background: linear-gradient(90deg, #6dd5fa, #2980b9);
+    width: 40%; /* valor de ejemplo */
+    transition: width 0.4s ease;
+  }
+
+  .porcentaje {
+    margin-top: 6px;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+
+  /* SUBCATEGORÍAS */
+  .subcategorias {
+    margin-top: 18px;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .subcategorias li {
+    background: #f8fbff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border-left: 5px solid #d6eaf8;
+    font-size: 0.95em;
+  }
+
+  .subcategorias li strong {
+    color: #2c3e50;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    h1 { font-size: 26px; }
+    .dimension h2 { font-size: 20px; }
+  }
+
+</style>
+</head>
+
+<body>
+
+<h1>🧠 Mapa Mental de Maternidad</h1>
+<p class="subtitulo">Una vista clara y emocional de tus cargas mentales, organizada por áreas clave.</p>
+
+<div class="grid-dimensiones">
+
+  <!-- DIMENSIÓN 1 -->
+  {% for key, cat in categorias.items %}
+  <div class="dimension" style="border-left-color: {{ cat.color }};">
+    <h2>{{ cat.icono }} {{ cat.nombre }}</h2>
+
+    <div class="barra-carga">
+      <div class="barra-interna" style="width: {{ cat.porcentaje }}%;"></div>
+    </div>
+    <div class="porcentaje">{{ cat.porcentaje }}% de carga mental</div>
+
+    <ul class="subcategorias">
+  {% for ini in cat.iniciativas %}
+    <li>
+      <strong>{{ ini.nombre }}</strong> — {{ ini.fases|length }} fases
+
+      <ul style="margin-top:8px; padding-left:18px; list-style:circle;">
+  {% for fase in ini.fases %}
+    <li>
+      <strong>{{ fase.nombre }}</strong>
+      <span style="opacity:0.7;">
+        ({{ fase.tareas_totales }} tareas,
+         {{ fase.tareas_completadas }} completadas,
+         {{ fase.tareas_retrasadas }} retrasadas)
+      </span>
+
+      <!-- LISTA DE TAREAS -->
+      <ul style="margin-top:6px; padding-left:18px; list-style:square;">
+        {% for tarea in fase.tareas %}
+          <li>
+            {{ tarea.nombre }}
+
+            {% if tarea.estado == 'completada' %}
+              <span style="color:green; font-weight:bold;">✔</span>
+            {% elif tarea.fecha_inicio and tarea.estado != 'completada' and tarea.fecha_inicio|add:tarea.duracion_dias < hoy %}
+              <span style="color:red; font-weight:bold;">⚠ retrasada</span>
+            {% else %}
+              <span style="opacity:0.6;">({{ tarea.get_estado_display }})</span>
+            {% endif %}
+          </li>
+        {% empty %}
+          <li style="opacity:0.6;">Sin tareas aún</li>
+        {% endfor %}
+      </ul>
+
+    </li>
+  {% empty %}
+    <li style="opacity:0.6;">Sin fases aún</li>
+  {% endfor %}
+</ul>
+
+
+    </li>
+  {% empty %}
+    <li style="opacity:0.6;">Sin iniciativas aún</li>
+  {% endfor %}
+</ul>
+
+  </div>
+{% endfor %}
+
+
+
+</div>
+
+</body>
+</html>

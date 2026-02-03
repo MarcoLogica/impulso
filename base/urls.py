@@ -129,6 +129,8 @@ path("metricas/resumen-contactos/", resumen_contactos),
 path('impulso/panel-avance/', views.panel_avance, name='panel_avance'),
 path('publicacion/<int:pk>/editar/', views.editar_publicacion, name='editar_publicacion'),
 path('publicacion/<int:pk>/eliminar/', views.eliminar_publicacion, name='eliminar_publicacion'),
+path('mapa-maternal/', views.mapa_maternal, name='mapa_maternal'),
+
 
 
 

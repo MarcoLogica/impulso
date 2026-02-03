@@ -34,7 +34,8 @@
       color: #444;
     }
 
-    input[type="text"] {
+    input[type="text"],
+    select {
       width: 100%;
       padding: 10px;
       font-size: 1em;
@@ -42,6 +43,11 @@
       border-radius: 6px;
       margin-bottom: 10px;
       box-sizing: border-box;
+      background-color: #fff;
+    }
+
+    select {
+      cursor: pointer;
     }
 
     .campo-error {
@@ -60,6 +66,8 @@
       font-size: 1em;
       cursor: pointer;
       transition: background-color 0.2s ease;
+      width: 100%;
+      margin-top: 10px;
     }
 
     button:hover {
@@ -78,24 +86,44 @@
     .enlace-volver:hover {
       text-decoration: underline;
     }
+
+    .categoria-info {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 15px;
+      margin-top: -5px;
+    }
   </style>
 </head>
 <body>
   <div class="contenedor">
     <h2>➕ Crear nueva iniciativa</h2>
+
     <form method="post" novalidate>
       {% csrf_token %}
 
+      <!-- Nombre -->
       <label for="id_nombre">Nombre de la iniciativa:</label>
       <input type="text" name="nombre" id="id_nombre" value="{{ form.nombre.value|default_if_none:'' }}">
       {% if form.nombre.errors %}
         <div class="campo-error">{{ form.nombre.errors.0 }}</div>
       {% endif %}
 
+      <!-- Objetivo -->
       <label for="id_objetivo">Objetivo principal:</label>
       <input type="text" name="objetivo" id="id_objetivo" value="{{ form.objetivo.value|default_if_none:'' }}">
       {% if form.objetivo.errors %}
         <div class="campo-error">{{ form.objetivo.errors.0 }}</div>
+      {% endif %}
+
+      <!-- Categoría Maternal -->
+      <label for="id_categoria_maternal">Categoría del mapa mental:</label>
+      {{ form.categoria_maternal }}
+      <div class="categoria-info">
+        Selecciona el área de la maternidad donde esta iniciativa aporta claridad y alivio.
+      </div>
+      {% if form.categoria_maternal.errors %}
+        <div class="campo-error">{{ form.categoria_maternal.errors.0 }}</div>
       {% endif %}
 
       <button type="submit">Crear</button>
@@ -103,22 +131,22 @@
 
     <hr style="margin: 40px 0;">
 
-<h3>🛠️ ¿Prefieres comenzar desde cero?</h3>
-<p>Crea una iniciativa totalmente personalizada, sin fases ni tareas predefinidas. Tú defines toda la estructura desde el inicio.</p>
+    <h3>🛠️ ¿Prefieres comenzar desde cero?</h3>
+    <p>Crea una iniciativa totalmente personalizada, sin fases ni tareas predefinidas. Tú defines toda la estructura desde el inicio.</p>
 
-<a href="{% url 'crear_iniciativa_personalizada' %}"
-   style="
-     display: inline-block;
-     margin-top: 10px;
-     padding: 10px 20px;
-     font-weight: bold;
-     background-color: #28a745;
-     color: white;
-     border-radius: 6px;
-     text-decoration: none;
-   ">
-  Crear iniciativa personalizada
-</a>
+    <a href="{% url 'crear_iniciativa_personalizada' %}"
+       style="
+         display: inline-block;
+         margin-top: 10px;
+         padding: 10px 20px;
+         font-weight: bold;
+         background-color: #28a745;
+         color: white;
+         border-radius: 6px;
+         text-decoration: none;
+       ">
+      Crear iniciativa personalizada
+    </a>
 
     <a href="{% url 'lista_iniciativas' %}" class="enlace-volver">⬅️ Volver al listado</a>
   </div>

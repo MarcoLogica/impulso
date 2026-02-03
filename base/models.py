@@ -208,13 +208,30 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Iniciativa(models.Model):
+
+    CATEGORIAS_MATERNAL = [
+        ('hogar', 'Hogar y Logística'),
+        ('crianza', 'Crianza y Desarrollo'),
+        ('trabajo', 'Trabajo y Proyectos'),
+        ('vinculos', 'Vínculos y Relaciones'),
+        ('salud', 'Salud Mental y Emocional'),
+    ]
+
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=120)
     objetivo = models.CharField(max_length=255)
     creado_en = models.DateTimeField(auto_now_add=True)
 
+    # ⭐ Nuevo campo
+    categoria_maternal = models.CharField(
+        max_length=20,
+        choices=CATEGORIAS_MATERNAL,
+        default='hogar'
+    )
+
     def __str__(self):
         return self.nombre
+
 
 class Fase(models.Model):
     iniciativa = models.ForeignKey(Iniciativa, related_name='fases', on_delete=models.CASCADE)

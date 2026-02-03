@@ -16,10 +16,11 @@ from .models import Iniciativa
 class IniciativaForm(forms.ModelForm):
     class Meta:
         model = Iniciativa
-        fields = ['nombre', 'objetivo']
+        fields = ['nombre', 'objetivo', 'categoria_maternal']
         widgets = {
             'nombre': forms.TextInput(attrs={'id': 'id_nombre'}),
             'objetivo': forms.TextInput(attrs={'id': 'id_objetivo'}),
+            'categoria_maternal': forms.Select(attrs={'id': 'id_categoria_maternal'}),
         }
 
 from django import forms

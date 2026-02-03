@@ -1933,3 +1933,108 @@ def eliminar_publicacion(request, pk):
 
     publicacion.delete()
     return redirect('feed_comunitario')
+
+def mapa_maternal(request):
+    hoy = timezone.now().date()
+
+    # Obtener todas las iniciativas del usuario
+    iniciativas = Iniciativa.objects.filter(usuario=request.user)
+
+    # Estructura base del mapa
+    categorias = {
+        'hogar': {
+            'nombre': 'Hogar y Logística',
+            'icono': '🏡',
+            'color': '#85c1e9',
+            'iniciativas': [],
+            'tareas_totales': 0,
+            'tareas_completadas': 0,
+            'tareas_retrasadas': 0,
+        },
+        'crianza': {
+            'nombre': 'Crianza y Desarrollo',
+            'icono': '👶',
+            'color': '#f5b7b1',
+            'iniciativas': [],
+            'tareas_totales': 0,
+            'tareas_completadas': 0,
+            'tareas_retrasadas': 0,
+        },
+        'trabajo': {
+            'nombre': 'Trabajo y Proyectos',
+            'icono': '💼',
+            'color': '#a3e4d7',
+            'iniciativas': [],
+            'tareas_totales': 0,
+            'tareas_completadas': 0,
+            'tareas_retrasadas': 0,
+        },
+        'vinculos': {
+            'nombre': 'Vínculos y Relaciones',
+            'icono': '❤️',
+            'color': '#f9e79f',
+            'iniciativas': [],
+            'tareas_totales': 0,
+            'tareas_completadas': 0,
+            'tareas_retrasadas': 0,
+        },
+        'salud': {
+            'nombre': 'Salud Mental y Emocional',
+            'icono': '🧘',
+            'color': '#d7bde2',
+            'iniciativas': [],
+            'tareas_totales': 0,
+            'tareas_completadas': 0,
+            'tareas_retrasadas': 0,
+        },
+    }
+
+    # Procesar iniciativas
+    for ini in iniciativas:
+        cat = ini.categoria_maternal
+        if cat not in categorias:
+            continue
+
+        fases = ini.fases.all().order_by('orden')
+
+        ini_data = {
+            'nombre': ini.nombre,
+            'fases': [],
+        }
+
+        for fase in fases:
+            tareas = fase.tareas.all()
+
+            fase_data = {
+                'nombre': fase.nombre,
+                'tareas': tareas,
+                'tareas_totales': tareas.count(),
+                'tareas_completadas': tareas.filter(estado='completada').count(),
+                'tareas_retrasadas': sum(
+                    1 for t in tareas
+                    if t.estado != 'completada'
+                    and t.fecha_inicio
+                    and (t.fecha_inicio + timedelta(days=t.duracion_dias)) < hoy
+                )
+            }
+
+            ini_data['fases'].append(fase_data)
+
+            # Acumular KPIs por categoría
+            categorias[cat]['tareas_totales'] += fase_data['tareas_totales']
+            categorias[cat]['tareas_completadas'] += fase_data['tareas_completadas']
+            categorias[cat]['tareas_retrasadas'] += fase_data['tareas_retrasadas']
+
+        categorias[cat]['iniciativas'].append(ini_data)
+
+    # Calcular % de carga mental por categoría
+    for cat, data in categorias.items():
+        if data['tareas_totales'] > 0:
+            data['porcentaje'] = int((data['tareas_completadas'] / data['tareas_totales']) * 100)
+        else:
+            data['porcentaje'] = 0
+
+    return render(request, 'mapa_maternal.html', {
+        'categorias': categorias
+    })
+
