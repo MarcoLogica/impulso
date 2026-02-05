@@ -207,7 +207,7 @@
   {% for ini in cat.iniciativas %}
 
     <!-- INICIATIVA -->
-    <div class="iniciativa" onclick="toggle(this)" style="background-color: {{ cat.color }}22;">
+    <div class="iniciativa" onclick="toggle(this)" style="background-color: {{ cat.color }}CC;">
       <strong>{{ ini.nombre }}</strong>
       <span class="info">{{ ini.fases|length }} fases</span>
     </div>
@@ -216,7 +216,7 @@
     <div class="fases oculto">
       {% for fase in ini.fases %}
 
-        <div class="fase" onclick="toggle(this)" style="background-color: {{ cat.color }}33;">
+        <div class="fase" onclick="toggle(this)" style="background-color: {{ cat.color }}66;">
           <strong>{{ fase.nombre }}</strong>
           <span class="info">
             {{ fase.tareas_totales }} tareas,
@@ -236,7 +236,7 @@
               {% if tarea.retrasada %}tarea-retrasada{% endif %}
             "
             data-status="{{ tarea.estado }}"
-            style="background-color: {{ cat.color }}11;">
+            style="background-color: {{ cat.color }}44;">
 
               {{ tarea.nombre }}
 
