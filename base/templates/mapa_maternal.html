@@ -165,6 +165,28 @@
   border-left: 4px solid #721c24;
 }
 
+  /* Layout general del grid */
+.grid-dimensiones {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+/* Móviles: 2 tarjetas por fila */
+@media (max-width: 600px) {
+  .grid-dimensiones {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Móviles muy pequeños: 1 tarjeta por fila */
+@media (max-width: 380px) {
+  .grid-dimensiones {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 
 
 
