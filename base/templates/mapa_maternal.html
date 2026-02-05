@@ -102,12 +102,92 @@
     .dimension h2 { font-size: 20px; }
   }
 
+  .iniciativa, .fase {
+  padding: 10px;
+  background: #f7f7f7;
+  border-radius: 6px;
+  margin-top: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+
+.iniciativa:hover, .fase:hover {
+  background: #ececec;
+}
+
+.oculto {
+  display: none;
+}
+
+.fases, .tareas {
+  margin-left: 20px;
+  margin-top: 6px;
+}
+
+.tarea {
+  padding: 4px 0;
+}
+
+  .tarea {
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  display: inline-block;
+}
+
+/* Estado: Pendiente */
+.tarea-pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Estado: En progreso */
+.tarea-progreso {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+/* Estado: Completada */
+.tarea-completada {
+  background-color: #d4edda;
+  color: #155724;
+  text-decoration: line-through;
+}
+
+
+
+  /* PRIORIDAD MÁXIMA: si es retrasada, SIEMPRE se ve roja */
+.tarea-retrasada {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  font-weight: bold;
+  border-left: 4px solid #721c24;
+}
+
+
+
+
+
 </style>
 </head>
 
 <body>
 
 <h1>🧠 Mapa Mental de Maternidad</h1>
+
+<div style="margin-bottom: 20px;">
+  <label>Filtrar tareas por estado:</label>
+  <select id="filtroEstado" onchange="filtrarTareas()">
+    <option value="todas">Todas</option>
+    <option value="pendiente">Pendientes</option>
+    <option value="progreso">En progreso</option>
+    <option value="completada">Completadas</option>
+    <option value="retrasada">Retrasadas</option>
+  </select>
+</div>
+
+
 <p class="subtitulo">Una vista clara y emocional de tus cargas mentales, organizada por áreas clave.</p>
 
 <div class="grid-dimensiones">
@@ -123,51 +203,68 @@
     <div class="porcentaje">{{ cat.porcentaje }}% de carga mental</div>
 
     <ul class="subcategorias">
+
   {% for ini in cat.iniciativas %}
-    <li>
-      <strong>{{ ini.nombre }}</strong> — {{ ini.fases|length }} fases
 
-      <ul style="margin-top:8px; padding-left:18px; list-style:circle;">
-  {% for fase in ini.fases %}
-    <li>
-      <strong>{{ fase.nombre }}</strong>
-      <span style="opacity:0.7;">
-        ({{ fase.tareas_totales }} tareas,
-         {{ fase.tareas_completadas }} completadas,
-         {{ fase.tareas_retrasadas }} retrasadas)
-      </span>
+    <!-- INICIATIVA -->
+    <div class="iniciativa" onclick="toggle(this)" style="background-color: {{ cat.color }}22;">
+      <strong>{{ ini.nombre }}</strong>
+      <span class="info">{{ ini.fases|length }} fases</span>
+    </div>
 
-      <!-- LISTA DE TAREAS -->
-      <ul style="margin-top:6px; padding-left:18px; list-style:square;">
-        {% for tarea in fase.tareas %}
-          <li>
-            {{ tarea.nombre }}
+    <!-- FASES -->
+    <div class="fases oculto">
+      {% for fase in ini.fases %}
 
-            {% if tarea.estado == 'completada' %}
-              <span style="color:green; font-weight:bold;">✔</span>
-            {% elif tarea.fecha_inicio and tarea.estado != 'completada' and tarea.fecha_inicio|add:tarea.duracion_dias < hoy %}
-              <span style="color:red; font-weight:bold;">⚠ retrasada</span>
-            {% else %}
-              <span style="opacity:0.6;">({{ tarea.get_estado_display }})</span>
-            {% endif %}
-          </li>
-        {% empty %}
-          <li style="opacity:0.6;">Sin tareas aún</li>
-        {% endfor %}
-      </ul>
+        <div class="fase" onclick="toggle(this)" style="background-color: {{ cat.color }}33;">
+          <strong>{{ fase.nombre }}</strong>
+          <span class="info">
+            {{ fase.tareas_totales }} tareas,
+            {{ fase.tareas_completadas }} completadas,
+            {{ fase.tareas_retrasadas }} retrasadas
+          </span>
+        </div>
 
-    </li>
+        <!-- TAREAS -->
+        <ul class="tareas oculto">
+          {% for tarea in fase.tareas %}
+
+            <li class="tarea
+              {% if tarea.estado == 'completada' %}tarea-completada{% endif %}
+              {% if tarea.estado == 'progreso' %}tarea-progreso{% endif %}
+              {% if tarea.estado == 'pendiente' %}tarea-pendiente{% endif %}
+              {% if tarea.retrasada %}tarea-retrasada{% endif %}
+            "
+            data-status="{{ tarea.estado }}"
+            style="background-color: {{ cat.color }}11;">
+
+              {{ tarea.nombre }}
+
+              {% if tarea.estado == 'completada' %}
+                ✔
+              {% elif tarea.retrasada %}
+                ⚠ retrasada
+              {% endif %}
+
+            </li>
+
+          {% empty %}
+            <li style="opacity:0.6;">Sin tareas aún</li>
+          {% endfor %}
+        </ul>
+
+      {% empty %}
+        <p style="opacity:0.6;">Sin fases aún</p>
+      {% endfor %}
+    </div>
+
   {% empty %}
-    <li style="opacity:0.6;">Sin fases aún</li>
+    <p style="opacity:0.6;">Sin iniciativas aún</p>
   {% endfor %}
+
 </ul>
 
 
-    </li>
-  {% empty %}
-    <li style="opacity:0.6;">Sin iniciativas aún</li>
-  {% endfor %}
-</ul>
 
   </div>
 {% endfor %}
@@ -175,6 +272,30 @@
 
 
 </div>
+
+<script>
+function toggle(element) {
+  const next = element.nextElementSibling;
+  if (!next) return;
+  next.classList.toggle('oculto');
+}
+
+function filtrarTareas() {
+  const estado = document.getElementById('filtroEstado').value;
+  const tareas = document.querySelectorAll('.tarea');
+
+  tareas.forEach(t => {
+    const st = t.dataset.status;
+
+    if (estado === 'todas' || estado === st) {
+      t.style.display = 'list-item';
+    } else {
+      t.style.display = 'none';
+    }
+  });
+}
+</script>
+
 
 </body>
 </html>

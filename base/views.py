@@ -1934,11 +1934,15 @@ def eliminar_publicacion(request, pk):
     publicacion.delete()
     return redirect('feed_comunitario')
 
+
+from datetime import timedelta
+from django.utils import timezone
+from django.shortcuts import render
+from .models import Iniciativa
+
+
 def mapa_maternal(request):
     hoy = timezone.now().date()
-
-    # Obtener todas las iniciativas del usuario
-    iniciativas = Iniciativa.objects.filter(usuario=request.user)
 
     # Estructura base del mapa
     categorias = {
@@ -1989,6 +1993,9 @@ def mapa_maternal(request):
         },
     }
 
+    # Obtener iniciativas del usuario
+    iniciativas = Iniciativa.objects.filter(usuario=request.user)
+
     # Procesar iniciativas
     for ini in iniciativas:
         cat = ini.categoria_maternal
@@ -2003,19 +2010,23 @@ def mapa_maternal(request):
         }
 
         for fase in fases:
-            tareas = fase.tareas.all()
+
+            # Procesar tareas y marcar retrasadas
+            tareas = []
+            for t in fase.tareas.all():
+                t.retrasada = (
+                    t.estado != 'completada'
+                    and t.fecha_inicio
+                    and (t.fecha_inicio + timedelta(days=t.duracion_dias)) < hoy
+                )
+                tareas.append(t)
 
             fase_data = {
                 'nombre': fase.nombre,
                 'tareas': tareas,
-                'tareas_totales': tareas.count(),
-                'tareas_completadas': tareas.filter(estado='completada').count(),
-                'tareas_retrasadas': sum(
-                    1 for t in tareas
-                    if t.estado != 'completada'
-                    and t.fecha_inicio
-                    and (t.fecha_inicio + timedelta(days=t.duracion_dias)) < hoy
-                )
+                'tareas_totales': len(tareas),
+                'tareas_completadas': sum(1 for t in tareas if t.estado == 'completada'),
+                'tareas_retrasadas': sum(1 for t in tareas if t.retrasada),
             }
 
             ini_data['fases'].append(fase_data)
@@ -2035,6 +2046,6 @@ def mapa_maternal(request):
             data['porcentaje'] = 0
 
     return render(request, 'mapa_maternal.html', {
-        'categorias': categorias
+        'categorias': categorias,
+        'hoy': hoy,
     })
-
