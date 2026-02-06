@@ -132,6 +132,19 @@ path('publicacion/<int:pk>/eliminar/', views.eliminar_publicacion, name='elimina
 path('mapa-maternal/', views.mapa_maternal, name='mapa_maternal'),
 
 
+# Red de apoyo - subusuario
+
+    path('red-apoyo/', views.lista_red_apoyo, name='lista_red_apoyo'),
+    path('red-apoyo/crear/', views.crear_red_apoyo, name='crear_red_apoyo'),
+    path('apoyo/login/', views.login_red_apoyo, name='login_red_apoyo'),
+    path('apoyo/panel/', views.panel_red_apoyo, name='panel_red_apoyo'),
+    path('apoyo/tarea/', views.actualizar_tarea_red_apoyo, name='actualizar_tarea_red_apoyo'),
+path('delegar/', views.delegar_tarea, name='delegar_tarea'),
+path('delegar/confirmar/', views.confirmar_delegacion, name='confirmar_delegacion'),
+
+
+
+
 
 
 

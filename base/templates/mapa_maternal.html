@@ -234,7 +234,36 @@ font-size: 1.5rem;
   .tarea {
     font-size: 1.1rem;
   }
+
+  }
+
+
+ .btn-delegar {
+  background-color: #6c5ce7; /* violeta IMPULSO */
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
+
+.btn-delegar:hover {
+  background-color: #5a4bd1;
+  transform: translateY(-1px);
+}
+
+.btn-delegar:active {
+  transform: translateY(1px);
+}
+
+
+
+
+
+
 
 
 
@@ -307,23 +336,38 @@ font-size: 1.5rem;
           {% for tarea in fase.tareas %}
 
             <li class="tarea
-              {% if tarea.estado == 'completada' %}tarea-completada{% endif %}
-              {% if tarea.estado == 'progreso' %}tarea-progreso{% endif %}
-              {% if tarea.estado == 'pendiente' %}tarea-pendiente{% endif %}
-              {% if tarea.retrasada %}tarea-retrasada{% endif %}
-            "
-            data-status="{{ tarea.estado }}"
-            style="background-color: {{ cat.color }}44;">
+  {% if tarea.estado == 'completada' %}tarea-completada{% endif %}
+  {% if tarea.estado == 'progreso' %}tarea-progreso{% endif %}
+  {% if tarea.estado == 'pendiente' %}tarea-pendiente{% endif %}
+  {% if tarea.retrasada %}tarea-retrasada{% endif %}
+"
+data-status="{{ tarea.estado }}"
+style="background-color: {{ cat.color }}44;">
 
-              {{ tarea.nombre }}
+  {{ tarea.nombre }}
 
-              {% if tarea.estado == 'completada' %}
-                ✔
-              {% elif tarea.retrasada %}
-                ⚠ retrasada
-              {% endif %}
+  {% if tarea.estado == 'completada' %}
+    ✔
+  {% elif tarea.retrasada %}
+    ⚠ retrasada
+  {% endif %}
 
-            </li>
+  <!-- MOSTRAR A QUIÉN ESTÁ DELEGADA -->
+  {% if tarea.delegado %}
+    <div class="delegada-a">
+      Delegada a: <strong>{{ tarea.delegado.nombre }}</strong>
+    </div>
+  {% endif %}
+
+  <!-- BOTÓN DELEGAR -->
+  <form method="post" action="{% url 'delegar_tarea' %}" style="margin-top: 8px;">
+      {% csrf_token %}
+      <input type="hidden" name="tarea_id" value="{{ tarea.id }}">
+      <button type="submit" class="btn-delegar">Delegar</button>
+  </form>
+
+</li>
+
 
           {% empty %}
             <li style="opacity:0.6;">Sin tareas aún</li>

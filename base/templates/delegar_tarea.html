@@ -1,0 +1,169 @@
+<style>
+/* CONTENEDOR GENERAL */
+.delegar-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* TARJETA PRINCIPAL */
+.delegar-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  padding: 28px;
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+  animation: fadeIn 0.4s ease;
+}
+
+/* TÍTULO */
+.delegar-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #2d3436;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* NOMBRE DE LA TAREA */
+.delegar-tarea-nombre {
+  background: #f1f7ff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 22px;
+  font-size: 1.1rem;
+  color: #2d3436;
+  border-left: 5px solid #74b9ff;
+}
+
+.delegar-tarea-nombre span {
+  color: #636e72;
+}
+
+/* LABEL */
+.delegar-label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  font-size: 1rem;
+  color: #2d3436;
+}
+
+/* SELECT */
+.delegar-select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #dfe6e9;
+  margin-bottom: 22px;
+  font-size: 1rem;
+  background: #f9fbff;
+  transition: border-color 0.2s ease;
+}
+
+.delegar-select:focus {
+  border-color: #6c5ce7;
+  outline: none;
+}
+
+/* BOTÓN PRINCIPAL */
+.delegar-btn {
+  width: 100%;
+  background-color: #6c5ce7;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  font-weight: 600;
+}
+
+.delegar-btn:hover {
+  background-color: #5a4bd1;
+  transform: translateY(-2px);
+}
+
+.delegar-btn:active {
+  transform: translateY(1px);
+}
+
+/* MENSAJE DE ÉXITO */
+.delegar-exito {
+  margin-top: 22px;
+  background: #d4edda;
+  color: #155724;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border-left: 5px solid #28a745;
+  font-size: 1rem;
+  animation: fadeIn 0.4s ease;
+  font-weight: 600;
+}
+
+/* LINK VOLVER */
+.volver-link {
+  display: block;
+  margin-top: 20px;
+  text-align: center;
+  color: #6c5ce7;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.volver-link:hover {
+  text-decoration: underline;
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+
+<div class="delegar-wrapper">
+
+    <div class="delegar-card">
+
+        <h2 class="delegar-title">Delegar tarea</h2>
+
+        <p class="delegar-tarea-nombre">
+            <span>Tarea seleccionada:</span>
+            <strong>{{ tarea.nombre }}</strong>
+        </p>
+
+        <form method="post" action="{% url 'confirmar_delegacion' %}">
+            {% csrf_token %}
+            <input type="hidden" name="tarea_id" value="{{ tarea.id }}">
+
+            <label for="apoyo_id" class="delegar-label">Selecciona a quién delegar</label>
+
+            <select name="apoyo_id" id="apoyo_id" class="delegar-select" required>
+                {% for apoyo in apoyos %}
+                    <option value="{{ apoyo.id }}">{{ apoyo.nombre }} ({{ apoyo.email }})</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="delegar-btn">Delegar tarea</button>
+        </form>
+
+        <!-- MENSAJE DE ÉXITO (solo aparece si se pasa ?exito=1 en la URL) -->
+        {% if request.GET.exito %}
+        <div class="delegar-exito">
+            La tarea fue delegada con éxito.
+            Ya está visible para la persona seleccionada en su panel de apoyo.
+        </div>
+        {% endif %}
+
+        <a href="{% url 'mapa_maternal' %}" class="volver-link">← Volver al mapa maternal</a>
+
+    </div>
+
+</div>

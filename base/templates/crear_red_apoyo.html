@@ -1,0 +1,98 @@
+<style>
+/* CONTENEDOR CENTRAL */
+.impulso-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  padding: 28px;
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+  margin: 40px auto;
+  animation: fadeIn 0.4s ease;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* TÍTULO */
+.impulso-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #2d3436;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* LABEL */
+.impulso-label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  font-size: 1rem;
+  color: #2d3436;
+}
+
+/* INPUTS */
+.impulso-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #dfe6e9;
+  margin-bottom: 18px;
+  font-size: 1rem;
+  background: #f9fbff;
+  transition: border-color 0.2s ease;
+}
+
+.impulso-input:focus {
+  border-color: #6c5ce7;
+  outline: none;
+}
+
+/* BOTÓN */
+.impulso-btn {
+  width: 100%;
+  background-color: #6c5ce7;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  font-weight: 600;
+}
+
+.impulso-btn:hover {
+  background-color: #5a4bd1;
+  transform: translateY(-2px);
+}
+
+.impulso-btn:active {
+  transform: translateY(1px);
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+
+<div class="impulso-card">
+
+  <h2 class="impulso-title">Agregar persona a tu red de apoyo</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <label class="impulso-label">Nombre</label>
+    <input type="text" name="nombre" class="impulso-input" required>
+
+    <label class="impulso-label">Email</label>
+    <input type="email" name="email" class="impulso-input" required>
+
+    <button type="submit" class="impulso-btn">Crear acceso</button>
+  </form>
+
+</div>
+

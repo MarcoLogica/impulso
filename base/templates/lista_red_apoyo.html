@@ -1,0 +1,226 @@
+<style>
+/* CONTENEDOR PRINCIPAL */
+.impulso-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 520px;
+  padding: 28px;
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+  margin: 40px auto;
+  animation: fadeIn 0.4s ease;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* TÍTULO */
+.impulso-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #2d3436;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* BOTÓN AGREGAR */
+.impulso-btn-add {
+  display: inline-block;
+  background-color: #6c5ce7;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-bottom: 20px;
+}
+
+.impulso-btn-add:hover {
+  background-color: #5a4bd1;
+  transform: translateY(-2px);
+}
+
+/* LISTA */
+.impulso-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* BLOQUE DESPLEGABLE */
+.impulso-apoyo details {
+  background: #f9fbff;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border-left: 6px solid #74b9ff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  cursor: pointer;
+}
+
+.impulso-apoyo summary {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d3436;
+  outline: none;
+}
+
+.impulso-email {
+  color: #636e72;
+  font-size: 0.95rem;
+}
+
+.impulso-codigo {
+  margin-top: 6px;
+  background: #eaf4ff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  border-left: 4px solid #74b9ff;
+  color: #2d3436;
+}
+
+/* TÍTULO TAREAS */
+.impulso-tareas-title {
+  margin-top: 14px;
+  font-weight: 700;
+  color: #2d3436;
+}
+
+/* TARJETAS DE TAREA */
+.impulso-tarea {
+  background: #ffffff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-top: 10px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+}
+
+
+/* ESTADOS CON COLORES MÁS SÓLIDOS */
+.estado-pendiente {
+  border-left: 5px solid #f39c12;      /* Amarillo fuerte */
+  background: #fef5d4;                 /* Amarillo suave pero más sólido */
+}
+
+.estado-progreso {
+  border-left: 5px solid #2980b9;      /* Azul intenso */
+  background: #d9eaff;                 /* Azul claro pero más saturado */
+}
+
+.estado-completada {
+  border-left: 5px solid #27ae60;      /* Verde sólido */
+  background: #d8f8e3;                 /* Verde suave pero más definido */
+}
+
+
+.impulso-tarea small {
+  color: #636e72;
+  font-size: 0.9rem;
+}
+
+/* MENSAJE VACÍO */
+.impulso-empty {
+  text-align: center;
+  background: #f1f7ff;
+  padding: 16px;
+  border-radius: 12px;
+  color: #2d3436;
+  border-left: 6px solid #74b9ff;
+  font-weight: 600;
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+  .impulso-btn-whatsapp {
+  display: block;
+  background: #25D366;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  margin-top: 14px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.impulso-btn-whatsapp:hover {
+  background: #1ebe5d;
+  transform: translateY(-2px);
+}
+
+.impulso-btn-whatsapp:active {
+  transform: translateY(1px);
+}
+
+</style>
+
+
+<div class="impulso-card">
+
+  <h2 class="impulso-title">Tu red de apoyo</h2>
+
+  <a href="{% url 'crear_red_apoyo' %}" class="impulso-btn-add">Agregar persona</a>
+
+  <ul class="impulso-lista">
+
+    {% for item in data %}
+      <li class="impulso-apoyo">
+
+        <details>
+          <summary>
+            {{ item.apoyo.nombre }}
+          </summary>
+
+          <div class="impulso-email">{{ item.apoyo.email }}</div>
+
+          <div class="impulso-codigo">
+            Código de acceso: {{ item.apoyo.codigo_acceso }}
+          </div>
+
+          <!-- BOTÓN WHATSAPP -->
+          <a
+            href="https://wa.me/?text=Hola%21%20Te%20agregu%C3%A9%20a%20mi%20Red%20de%20Apoyo%20en%20IMPULSO.%0A%0A
+            Tu%20c%C3%B3digo%20de%20acceso%20es%3A%20{{ item.apoyo.codigo_acceso }}%0A
+            Ingresa%20aqu%C3%AD%20para%20ver%20tus%20tareas%20delegadas%3A%20http%3A%2F%2F127.0.0.1%3A8000%2Fapoyo%2Flogin%2F%0A%0A
+            Gracias%20por%20acompa%C3%B1arme%20%F0%9F%92%9C"
+            target="_blank"
+            class="impulso-btn-whatsapp"
+          >
+            📲 Enviar invitación por WhatsApp
+          </a>
+
+          <div class="impulso-tareas-title">Tareas delegadas:</div>
+
+          {% if item.tareas %}
+            {% for tarea in item.tareas %}
+              <div class="impulso-tarea
+                {% if tarea.estado == 'pendiente' %}estado-pendiente{% endif %}
+                {% if tarea.estado == 'progreso' %}estado-progreso{% endif %}
+                {% if tarea.estado == 'completada' %}estado-completada{% endif %}
+              ">
+                <strong>{{ tarea.nombre }}</strong><br>
+                <small>Estado: {{ tarea.estado }}</small>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="impulso-tarea estado-pendiente">
+              <small>No tiene tareas delegadas aún.</small>
+            </div>
+          {% endif %}
+
+        </details>
+
+      </li>
+    {% endfor %}
+
+  </ul>
+
+</div>

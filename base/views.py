@@ -2049,3 +2049,133 @@ def mapa_maternal(request):
         'categorias': categorias,
         'hoy': hoy,
     })
+
+
+# RED DE APOYO
+
+# views.py
+import secrets
+from django.shortcuts import render, redirect
+from .models import RedApoyoUser
+
+def crear_red_apoyo(request):
+    if request.method == "POST":
+        nombre = request.POST.get("nombre")
+        email = request.POST.get("email")
+
+        codigo = secrets.token_hex(4)  # Código corto y único
+
+        RedApoyoUser.objects.create(
+            madre=request.user,
+            nombre=nombre,
+            email=email,
+            codigo_acceso=codigo
+        )
+
+        return redirect("lista_red_apoyo")
+
+    return render(request, "crear_red_apoyo.html")
+
+def lista_red_apoyo(request):
+    apoyos = request.user.red_apoyo.all()
+
+    # Agregar tareas delegadas por cada persona
+    data = []
+    for apoyo in apoyos:
+        tareas = Tarea.objects.filter(delegado=apoyo)
+        data.append({
+            "apoyo": apoyo,
+            "tareas": tareas
+        })
+
+    return render(request, "lista_red_apoyo.html", {
+        "data": data
+    })
+
+
+
+def login_red_apoyo(request):
+    if request.method == "POST":
+        codigo = request.POST.get("codigo")
+
+        try:
+            apoyo = RedApoyoUser.objects.get(codigo_acceso=codigo)
+            request.session["apoyo_id"] = apoyo.id
+            return redirect("panel_red_apoyo")
+        except RedApoyoUser.DoesNotExist:
+            return render(request, "login_red_apoyo.html", {"error": "Código incorrecto"})
+
+    return render(request, "login_red_apoyo.html")
+
+
+from .models import Tarea
+
+def panel_red_apoyo(request):
+    apoyo_id = request.session.get("apoyo_id")
+
+    if not apoyo_id:
+        return redirect("login_red_apoyo")
+
+    apoyo = RedApoyoUser.objects.get(id=apoyo_id)
+
+    tareas = Tarea.objects.filter(delegado=apoyo)
+
+    return render(request, "panel_red_apoyo.html", {
+        "apoyo": apoyo,
+        "tareas": tareas
+    })
+
+
+def actualizar_tarea_red_apoyo(request):
+    if request.method == "POST":
+        tarea_id = request.POST.get("tarea_id")
+        accion = request.POST.get("accion")
+
+        tarea = Tarea.objects.get(id=tarea_id)
+
+        if accion == "progreso":
+            tarea.estado = "progreso"
+        elif accion == "completada":
+            tarea.estado = "completada"
+
+        tarea.save()
+
+        return redirect("panel_red_apoyo")
+
+
+def delegar_tarea(request):
+    # Si viene por GET (ej: ?exito=1&tarea_id=200)
+    if request.method == "GET":
+        tarea_id = request.GET.get("tarea_id")
+        tarea = Tarea.objects.get(id=tarea_id)
+        apoyos = request.user.red_apoyo.all()
+
+        return render(request, "delegar_tarea.html", {
+            "tarea": tarea,
+            "apoyos": apoyos
+        })
+
+    # Si viene por POST (cuando la mamá hace clic en "Delegar")
+    if request.method == "POST":
+        tarea_id = request.POST.get("tarea_id")
+        tarea = Tarea.objects.get(id=tarea_id)
+        apoyos = request.user.red_apoyo.all()
+
+        return render(request, "delegar_tarea.html", {
+            "tarea": tarea,
+            "apoyos": apoyos
+        })
+
+
+def confirmar_delegacion(request):
+    if request.method == "POST":
+        tarea_id = request.POST.get("tarea_id")
+        apoyo_id = request.POST.get("apoyo_id")
+
+        tarea = Tarea.objects.get(id=tarea_id)
+        apoyo = RedApoyoUser.objects.get(id=apoyo_id)
+
+        tarea.delegado = apoyo
+        tarea.save()
+
+        return redirect(f"/delegar/?exito=1&tarea_id={tarea.id}")
