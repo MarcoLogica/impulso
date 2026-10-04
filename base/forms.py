@@ -249,3 +249,64 @@ class RegistroUsuarioForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("username", "password1", "password2")
+
+# BUZON DE IDEAS
+
+# ==================== BUZÓN DE IDEAS ====================
+
+from .models import Idea
+
+class IdeaForm(forms.ModelForm):
+    class Meta:
+        model = Idea
+        fields = ['titulo', 'descripcion', 'etiquetas', 'energia']
+        widgets = {
+            'titulo': forms.TextInput(attrs={
+                'placeholder': 'Título de la idea...',
+                'class': 'form-control',
+                'autofocus': True
+            }),
+            'descripcion': forms.Textarea(attrs={
+                'placeholder': 'Describe la idea con más detalle (opcional)...',
+                'rows': 4,
+                'class': 'form-control'
+            }),
+            'etiquetas': forms.TextInput(attrs={
+                'placeholder': 'Ej: logística, app, automatización',
+                'class': 'form-control'
+            }),
+            'energia': forms.Select(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'titulo': 'Título',
+            'descripcion': 'Descripción',
+            'etiquetas': 'Etiquetas',
+            'energia': 'Nivel de energía',
+        }
+
+
+class ConvertirIdeaForm(forms.Form):
+    ACCIONES = [
+        ('iniciativa', 'Convertir en nueva Iniciativa'),
+        ('fase', 'Convertir en Fase de una Iniciativa existente'),
+        ('tarea', 'Convertir en Tarea de una Fase existente'),
+        ('archivar', 'Archivar'),
+        ('descartar', 'Descartar'),
+    ]
+
+    accion = forms.ChoiceField(choices=ACCIONES, widget=forms.RadioSelect)
+    iniciativa = forms.ModelChoiceField(
+        queryset=Iniciativa.objects.none(),
+        required=False,
+        label="Seleccionar Iniciativa"
+    )
+    fase = forms.ModelChoiceField(
+        queryset=Fase.objects.none(),
+        required=False,
+        label="Seleccionar Fase"
+    )
+
+    def __init__(self, usuario, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['iniciativa'].queryset = Iniciativa.objects.filter(usuario=usuario)
+        self.fields['fase'].queryset = Fase.objects.filter(iniciativa__usuario=usuario)

@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+vx73iep2@v*-u23(=%qpn^(-cntbx$dx8=e!+)#pcdvjf_d4&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['liadesarrollo.pythonanywhere.com', '127.0.0.1', 'localhost']
 
@@ -55,7 +55,7 @@ ROOT_URLCONF = 'pokemon.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['C:\\Users\\Marco\\Desktop\\Mis_entornos\\sistema_pokemon\\src\\pokemon\\base\\templates'],
+        'DIRS': [BASE_DIR / 'base' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

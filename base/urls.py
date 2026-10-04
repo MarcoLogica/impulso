@@ -143,8 +143,15 @@ path('delegar/', views.delegar_tarea, name='delegar_tarea'),
 path('delegar/confirmar/', views.confirmar_delegacion, name='confirmar_delegacion'),
 
 
-
-
+# ==================== BUZÓN DE IDEAS ====================
+path('ideas/', views.lista_ideas, name='lista_ideas'),
+path('ideas/crear/', views.crear_idea, name='crear_idea'),
+path('ideas/rapida/', views.crear_idea_rapida, name='crear_idea_rapida'),
+path('ideas/<int:idea_id>/', views.detalle_idea, name='detalle_idea'),
+path('ideas/<int:idea_id>/editar/', views.editar_idea, name='editar_idea'),
+path('ideas/<int:idea_id>/eliminar/', views.eliminar_idea, name='eliminar_idea'),
+path('ideas/<int:idea_id>/procesar/', views.procesar_idea, name='procesar_idea'),
+path('ideas/<int:idea_id>/estado/', views.cambiar_estado_idea, name='cambiar_estado_idea'),
 
 
 

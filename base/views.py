@@ -1653,12 +1653,22 @@ from .models import Tarea
 @csrf_exempt
 def reordenar_tareas(request, fase_id):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        orden = data.get('orden', [])
-        for i, tarea_id in enumerate(orden):
-            Tarea.objects.filter(id=tarea_id, fase_id=fase_id).update(orden=i)
-        return JsonResponse({'status': 'ok'})
+        try:
+            data = json.loads(request.body)
+            orden = data.get('orden', [])
 
+            # Actualiza fase + orden de cada tarea
+            for i, tarea_id in enumerate(orden):
+                Tarea.objects.filter(id=tarea_id).update(
+                    fase_id=fase_id,
+                    orden=i
+                )
+
+            return JsonResponse({'status': 'ok'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'mensaje': str(e)}, status=400)
+
+    return JsonResponse({'status': 'error', 'mensaje': 'Método no permitido'}, status=405)
 
 #/////////////////////// RPA //////////////////
 
@@ -1947,7 +1957,7 @@ def mapa_maternal(request):
     # Estructura base del mapa
     categorias = {
         'hogar': {
-            'nombre': 'Hogar y Logística',
+            'nombre': 'Proyectos',
             'icono': '🏡',
             'color': '#85c1e9',
             'iniciativas': [],
@@ -1956,7 +1966,7 @@ def mapa_maternal(request):
             'tareas_retrasadas': 0,
         },
         'crianza': {
-            'nombre': 'Crianza y Desarrollo',
+            'nombre': 'Gestión',
             'icono': '👶',
             'color': '#f5b7b1',
             'iniciativas': [],
@@ -1965,7 +1975,7 @@ def mapa_maternal(request):
             'tareas_retrasadas': 0,
         },
         'trabajo': {
-            'nombre': 'Trabajo y Proyectos',
+            'nombre': 'Formación',
             'icono': '💼',
             'color': '#a3e4d7',
             'iniciativas': [],
@@ -1974,7 +1984,7 @@ def mapa_maternal(request):
             'tareas_retrasadas': 0,
         },
         'vinculos': {
-            'nombre': 'Vínculos y Relaciones',
+            'nombre': 'Entrenamiento',
             'icono': '❤️',
             'color': '#f9e79f',
             'iniciativas': [],
@@ -1983,7 +1993,7 @@ def mapa_maternal(request):
             'tareas_retrasadas': 0,
         },
         'salud': {
-            'nombre': 'Salud Mental y Emocional',
+            'nombre': 'Alimentación',
             'icono': '🧘',
             'color': '#d7bde2',
             'iniciativas': [],
@@ -2179,3 +2189,232 @@ def confirmar_delegacion(request):
         tarea.save()
 
         return redirect(f"/delegar/?exito=1&tarea_id={tarea.id}")
+
+
+# BUZON DE IDEAS
+
+
+
+# ==================== BUZÓN DE IDEAS ====================
+from django.db import models
+from django.utils import timezone
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Idea
+from .forms import IdeaForm, ConvertirIdeaForm
+from .utils import crear_plan_base_para_iniciativa
+
+
+@login_required
+def lista_ideas(request):
+    estado = request.GET.get('estado', 'capturada')
+    etiqueta = request.GET.get('etiqueta', '')
+    energia = request.GET.get('energia', '')
+
+    ideas = Idea.objects.filter(usuario=request.user)
+
+    if estado and estado != 'todas':
+        ideas = ideas.filter(estado=estado)
+    if etiqueta:
+        ideas = ideas.filter(etiquetas__icontains=etiqueta)
+    if energia:
+        ideas = ideas.filter(energia=energia)
+
+    # Contadores para el resumen
+    contadores = {
+        'capturada': Idea.objects.filter(usuario=request.user, estado='capturada').count(),
+        'procesando': Idea.objects.filter(usuario=request.user, estado='procesando').count(),
+        'convertida': Idea.objects.filter(usuario=request.user, estado='convertida').count(),
+        'archivada': Idea.objects.filter(usuario=request.user, estado='archivada').count(),
+        'descartada': Idea.objects.filter(usuario=request.user, estado='descartada').count(),
+        'total': Idea.objects.filter(usuario=request.user).count(),
+    }
+
+    return render(request, 'base/lista_ideas.html', {
+        'ideas': ideas,
+        'contadores': contadores,
+        'estado_actual': estado,
+        'etiqueta_actual': etiqueta,
+        'energia_actual': energia,
+    })
+
+
+@login_required
+def crear_idea(request):
+    if request.method == 'POST':
+        form = IdeaForm(request.POST)
+        if form.is_valid():
+            idea = form.save(commit=False)
+            idea.usuario = request.user
+            idea.save()
+            messages.success(request, '💡 Idea capturada correctamente.')
+            return redirect('lista_ideas')
+    else:
+        form = IdeaForm()
+
+    return render(request, 'base/crear_idea.html', {'form': form})
+
+
+@login_required
+def crear_idea_rapida(request):
+    """Versión AJAX / modal para el botón flotante"""
+    if request.method == 'POST':
+        form = IdeaForm(request.POST)
+        if form.is_valid():
+            idea = form.save(commit=False)
+            idea.usuario = request.user
+            idea.save()
+            return JsonResponse({'status': 'ok', 'mensaje': 'Idea capturada'})
+        return JsonResponse({'status': 'error', 'errores': form.errors}, status=400)
+    return JsonResponse({'status': 'error'}, status=405)
+
+
+@login_required
+def detalle_idea(request, idea_id):
+    idea = get_object_or_404(Idea, id=idea_id, usuario=request.user)
+    return render(request, 'base/detalle_idea.html', {'idea': idea})
+
+
+@login_required
+def editar_idea(request, idea_id):
+    idea = get_object_or_404(Idea, id=idea_id, usuario=request.user)
+    if request.method == 'POST':
+        form = IdeaForm(request.POST, instance=idea)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Idea actualizada.')
+            return redirect('lista_ideas')
+    else:
+        form = IdeaForm(instance=idea)
+    return render(request, 'base/editar_idea.html', {'form': form, 'idea': idea})
+
+
+@login_required
+def eliminar_idea(request, idea_id):
+    idea = get_object_or_404(Idea, id=idea_id, usuario=request.user)
+    if request.method == 'POST':
+        idea.delete()
+        messages.success(request, 'Idea eliminada.')
+        return redirect('lista_ideas')
+    return render(request, 'base/eliminar_idea.html', {'idea': idea})
+
+
+@login_required
+def procesar_idea(request, idea_id):
+    idea = get_object_or_404(Idea, id=idea_id, usuario=request.user)
+
+    if request.method == 'POST':
+        form = ConvertirIdeaForm(request.user, request.POST)
+        if form.is_valid():
+            accion = form.cleaned_data['accion']
+
+            if accion == 'iniciativa':
+                # Crear nueva Iniciativa a partir de la idea
+                iniciativa = Iniciativa.objects.create(
+                    usuario=request.user,
+                    nombre=idea.titulo,
+                    objetivo=idea.descripcion[:255] if idea.descripcion else idea.titulo,
+                    categoria_maternal='trabajo'  # valor por defecto, se puede mejorar
+                )
+                crear_plan_base_para_iniciativa(iniciativa)
+
+                idea.estado = 'convertida'
+                idea.iniciativa_relacionada = iniciativa
+                idea.save()
+
+                messages.success(request, f'✅ Idea convertida en la iniciativa "{iniciativa.nombre}".')
+                return redirect('vista_plan', iniciativa_id=iniciativa.id)
+
+            elif accion == 'fase':
+                iniciativa = form.cleaned_data['iniciativa']
+                if not iniciativa:
+                    messages.error(request, 'Debes seleccionar una iniciativa.')
+                    return redirect('procesar_idea', idea_id=idea.id)
+
+                # Crear fase al final
+                ultimo_orden = iniciativa.fases.aggregate(models.Max('orden'))['orden__max'] or 0
+                fase = Fase.objects.create(
+                    iniciativa=iniciativa,
+                    nombre=idea.titulo,
+                    orden=ultimo_orden + 1,
+                    icono='💡',
+                    color_hex='#f39c12'
+                )
+
+                idea.estado = 'convertida'
+                idea.iniciativa_relacionada = iniciativa
+                idea.fase_relacionada = fase
+                idea.save()
+
+                messages.success(request, f'✅ Idea convertida en la fase "{fase.nombre}".')
+                return redirect('vista_plan', iniciativa_id=iniciativa.id)
+
+            elif accion == 'tarea':
+                fase = form.cleaned_data['fase']
+                if not fase:
+                    messages.error(request, 'Debes seleccionar una fase.')
+                    return redirect('procesar_idea', idea_id=idea.id)
+
+                ultimo_orden = fase.tareas.aggregate(models.Max('orden'))['orden__max'] or 0
+                tarea = Tarea.objects.create(
+                    fase=fase,
+                    nombre=idea.titulo,
+                    fecha_inicio=timezone.now().date(),
+                    duracion_dias=1,
+                    orden=ultimo_orden + 1,
+                    notas=idea.descripcion
+                )
+
+                idea.estado = 'convertida'
+                idea.iniciativa_relacionada = fase.iniciativa
+                idea.fase_relacionada = fase
+                idea.tarea_relacionada = tarea
+                idea.save()
+
+                messages.success(request, f'✅ Idea convertida en la tarea "{tarea.nombre}".')
+                return redirect('vista_plan', iniciativa_id=fase.iniciativa.id)
+
+            elif accion == 'archivar':
+                idea.estado = 'archivada'
+                idea.save()
+                messages.success(request, 'Idea archivada.')
+                return redirect('lista_ideas')
+
+            elif accion == 'descartar':
+                idea.estado = 'descartada'
+                idea.save()
+                messages.success(request, 'Idea descartada.')
+                return redirect('lista_ideas')
+
+    else:
+        form = ConvertirIdeaForm(request.user)
+
+    return render(request, 'base/procesar_idea.html', {
+        'idea': idea,
+        'form': form
+    })
+
+
+@login_required
+@require_POST
+def cambiar_estado_idea(request, idea_id):
+    idea = get_object_or_404(Idea, id=idea_id, usuario=request.user)
+    nuevo_estado = request.POST.get('estado')
+
+    estados_validos = ['capturada', 'procesando', 'archivada', 'descartada']
+    if nuevo_estado not in estados_validos:
+        messages.error(request, 'Estado no válido.')
+        return redirect('lista_ideas')
+
+    idea.estado = nuevo_estado
+    idea.save()
+
+    mensajes = {
+        'capturada': 'Idea marcada como Capturada.',
+        'procesando': 'Idea marcada como En procesamiento.',
+        'archivada': 'Idea archivada.',
+        'descartada': 'Idea descartada.',
+    }
+    messages.success(request, mensajes.get(nuevo_estado, 'Estado actualizado.'))
+    return redirect('lista_ideas')

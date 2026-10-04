@@ -360,6 +360,34 @@
 
 </head>
 
+<!-- ===== BOTÓN FLOTANTE DE IDEAS ===== -->
+<style>
+  .btn-flotante-idea {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 64px;
+    height: 64px;
+    background: #27ae60;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+    z-index: 9999;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .btn-flotante-idea:hover {
+    transform: scale(1.1);
+    background: #219a52;
+  }
+</style>
+
+<a href="{% url 'crear_idea' %}" class="btn-flotante-idea" title="Capturar nueva idea">💡</a>
+
 <body>
   <div class="layout">
 
@@ -398,30 +426,29 @@
             </div>
           </div>
 
-          <!-- 🔃 Lista de tareas con drag & drop -->
-          <ul id="lista-tareas-{{ fase.id }}" class="sortable-tareas" data-fase-id="{{ fase.id }}" style="list-style-type: none; padding-left: 0; margin-top: 10px;">
-            {% for tarea in fase.tareas.all %}
-              <li class="tarea {% if tarea.retrasada %}tarea-retrasada{% endif %}">
+         <!-- 🔃 Lista de tareas con drag & drop -->
+<ul id="lista-tareas-{{ fase.id }}" class="sortable-tareas" data-fase-id="{{ fase.id }}" style="list-style-type: none; padding-left: 0; margin-top: 10px;">
+  {% for tarea in fase.tareas.all %}
+    <li class="tarea {% if tarea.retrasada %}tarea-retrasada{% endif %}" data-id="{{ tarea.id }}">
 
-
-                {% if tarea.estado != 'completada' %}
-                  <form method="post" action="{% url 'actualizar_estado_tarea' tarea.id %}" style="display: inline;">
-                    {% csrf_token %}
-                    <a href="{% url 'marcar_tarea_completada' tarea.id %}" class="boton-completar" title="Marcar como completada y registrar hito">✅</a>
-                  </form>
-                {% endif %}
-                <strong>{{ tarea.nombre }}</strong>
-                <a href="{% url 'editar_tarea' tarea.id %}" title="Editar tarea" class="boton-editar-tarea">✏️</a>
-                <a href="{% url 'eliminar_tarea' tarea.id %}" title="Eliminar tarea" class="boton-eliminar-tarea" onclick="return confirm('¿Eliminar esta tarea?')">🗑️</a><br>
-                <small>
-                  {{ tarea.fecha_inicio|date:"j F Y" }} – duración: {{ tarea.duracion_dias }} días – Estado:
-                  <span class="estado">{{ tarea.get_estado_display }}</span>
-                </small>
-              </li>
-            {% empty %}
-              <li style="margin-bottom: 10px; color: #666;">No hay tareas aún para esta fase.</li>
-            {% endfor %}
-          </ul>
+      {% if tarea.estado != 'completada' %}
+        <form method="post" action="{% url 'actualizar_estado_tarea' tarea.id %}" style="display: inline;">
+          {% csrf_token %}
+          <a href="{% url 'marcar_tarea_completada' tarea.id %}" class="boton-completar" title="Marcar como completada y registrar hito">✅</a>
+        </form>
+      {% endif %}
+      <strong>{{ tarea.nombre }}</strong>
+      <a href="{% url 'editar_tarea' tarea.id %}" title="Editar tarea" class="boton-editar-tarea">✏️</a>
+      <a href="{% url 'eliminar_tarea' tarea.id %}" title="Eliminar tarea" class="boton-eliminar-tarea" onclick="return confirm('¿Eliminar esta tarea?')">🗑️</a><br>
+      <small>
+        {{ tarea.fecha_inicio|date:"j F Y" }} – duración: {{ tarea.duracion_dias }} días – Estado:
+        <span class="estado">{{ tarea.get_estado_display }}</span>
+      </small>
+    </li>
+  {% empty %}
+    <li style="margin-bottom: 10px; color: #666;">No hay tareas aún para esta fase.</li>
+  {% endfor %}
+</ul>
 
           <!-- 🟡 Botón para crear tarea en esta fase -->
           <a href="{% url 'crear_tarea_en_fase' fase.id %}" class="boton-amarillo">📌 Nueva tarea para esta fase</a>
@@ -518,32 +545,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-  <!-- 🔃 Script para drag & drop -->
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-  <script>
-  document.querySelectorAll('.sortable-tareas').forEach(lista => {
-    Sortable.create(lista, {
-      animation: 150,
+  <!-- 🔃 Script para drag & drop (permite mover entre fases) -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+document.querySelectorAll('.sortable-tareas').forEach(lista => {
+  Sortable.create(lista, {
+    group: 'tareas',          // ← clave: permite mover entre fases
+    animation: 150,
+    filter: "form, .boton-editar-tarea, .boton-eliminar-tarea, .boton-completar",
+    preventOnFilter: false,
 
-      /* 🔥 Clave: evitar que Sortable capture el toque en botones y formularios */
-      filter: "form, .boton-editar-tarea, .boton-eliminar-tarea, .boton-completar",
-      preventOnFilter: false,
+    onEnd: function (evt) {
+      const nuevaFaseId = evt.to.dataset.faseId;
+      const ordenado = Array.from(evt.to.children)
+        .map(el => el.dataset.id)
+        .filter(id => id);   // elimina posibles undefined
 
-      onEnd: function (evt) {
-        const faseId = lista.dataset.faseId;
-        const ordenado = Array.from(lista.children).map(el => el.dataset.id);
-
-        fetch(`/tareas/reordenar/${faseId}/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
-          },
-          body: JSON.stringify({ orden: ordenado })
-        });
-      }
-    });
+      fetch(`/tareas/reordenar/${nuevaFaseId}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ orden: ordenado })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'ok') {
+          console.log('Tarea movida y orden guardado');
+        }
+      })
+      .catch(err => console.error('Error al mover tarea:', err));
+    }
   });
+});
 </script>
 
   </div>

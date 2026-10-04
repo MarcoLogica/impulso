@@ -210,11 +210,11 @@ from django.contrib.auth.models import User
 class Iniciativa(models.Model):
 
     CATEGORIAS_MATERNAL = [
-        ('hogar', 'Hogar y Logística'),
-        ('crianza', 'Crianza y Desarrollo'),
-        ('trabajo', 'Trabajo y Proyectos'),
-        ('vinculos', 'Vínculos y Relaciones'),
-        ('salud', 'Salud Mental y Emocional'),
+        ('hogar', 'Proyectos'),
+        ('crianza', 'Gestión'),
+        ('trabajo', 'Formación'),
+        ('vinculos', 'Entrenamiento'),
+        ('salud', 'Alimentación'),
     ]
 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -502,3 +502,60 @@ class RedApoyoUser(models.Model):
 
     def __str__(self):
         return f"{self.nombre} (Apoyo de {self.madre.username})"
+
+# BUZON DE IDEAS
+
+# ==================== BUZÓN DE IDEAS ====================
+
+class Idea(models.Model):
+    ESTADOS = [
+        ('capturada', 'Capturada'),
+        ('procesando', 'En procesamiento'),
+        ('convertida', 'Convertida'),
+        ('archivada', 'Archivada'),
+        ('descartada', 'Descartada'),
+    ]
+
+    ENERGIA = [
+        ('alta', 'Alta'),
+        ('media', 'Media'),
+        ('baja', 'Baja'),
+    ]
+
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ideas')
+    titulo = models.CharField(max_length=200)
+    descripcion = models.TextField(blank=True)
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='capturada')
+    etiquetas = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Separadas por coma. Ejemplo: logística, app, automatización"
+    )
+    energia = models.CharField(max_length=10, choices=ENERGIA, blank=True)
+
+    # Trazabilidad cuando se convierte
+    iniciativa_relacionada = models.ForeignKey(
+        'Iniciativa', null=True, blank=True, on_delete=models.SET_NULL, related_name='ideas_origen'
+    )
+    fase_relacionada = models.ForeignKey(
+        'Fase', null=True, blank=True, on_delete=models.SET_NULL, related_name='ideas_origen'
+    )
+    tarea_relacionada = models.ForeignKey(
+        'Tarea', null=True, blank=True, on_delete=models.SET_NULL, related_name='ideas_origen'
+    )
+
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-creado_en']
+        verbose_name = 'Idea'
+        verbose_name_plural = 'Ideas'
+
+    def __str__(self):
+        return self.titulo
+
+    def lista_etiquetas(self):
+        if not self.etiquetas:
+            return []
+        return [e.strip() for e in self.etiquetas.split(',') if e.strip()]

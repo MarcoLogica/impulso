@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Buzón de Ideas – IMPULSO</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #5dade2;
+      margin: 0;
+      padding: 30px;
+    }
+    .contenedor {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    h1 { margin-top: 0; color: #2c3e50; }
+    .resumen {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+    .chip {
+      background: #eaf2f8;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.95em;
+      color: #2c3e50;
+      text-decoration: none;
+    }
+    .chip.activo { background: #3498db; color: white; }
+    .filtros {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filtros input, .filtros select {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .idea-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      background: #fafafa;
+      transition: box-shadow 0.2s;
+    }
+    .idea-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.08); }
+    .idea-titulo { font-size: 1.25em; font-weight: 600; color: #2c3e50; margin: 0 0 6px 0; }
+    .idea-meta { font-size: 0.9em; color: #7f8c8d; margin-bottom: 8px; }
+    .etiquetas span {
+      background: #d5f5e3;
+      color: #1e8449;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      margin-right: 5px;
+    }
+    .acciones a {
+      margin-right: 10px;
+      text-decoration: none;
+      font-size: 0.95em;
+    }
+    .btn-nuevo {
+      display: inline-block;
+      background: #27ae60;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .btn-procesar { color: #2980b9; font-weight: bold; }
+    .btn-editar { color: #f39c12; }
+    .btn-eliminar { color: #e74c3c; }
+    .vacio { text-align: center; padding: 40px; color: #7f8c8d; }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h1>💡 Buzón de Ideas</h1>
+
+    <a href="{% url 'crear_idea' %}" class="btn-nuevo">+ Nueva Idea</a>
+    <a href="{% url 'lista_iniciativas' %}" style="margin-left: 12px; color: #2c3e50;">← Volver a Iniciativas</a>
+
+   <!-- Resumen de estados -->
+<div class="resumen">
+  <a href="?estado=capturada" class="chip {% if estado_actual == 'capturada' %}activo{% endif %}">
+    Capturadas ({{ contadores.capturada }})
+  </a>
+  <a href="?estado=procesando" class="chip {% if estado_actual == 'procesando' %}activo{% endif %}">
+    En proceso ({{ contadores.procesando }})
+  </a>
+  <a href="?estado=convertida" class="chip {% if estado_actual == 'convertida' %}activo{% endif %}">
+    Convertidas ({{ contadores.convertida }})
+  </a>
+  <a href="?estado=archivada" class="chip {% if estado_actual == 'archivada' %}activo{% endif %}">
+    Archivadas ({{ contadores.archivada }})
+  </a>
+  <a href="?estado=descartada" class="chip {% if estado_actual == 'descartada' %}activo{% endif %}">
+    🗑️ Descartadas ({{ contadores.descartada }})
+  </a>
+  <a href="?estado=todas" class="chip {% if estado_actual == 'todas' %}activo{% endif %}">
+    Todas ({{ contadores.total }})
+  </a>
+</div>
+
+    <!-- Filtros -->
+    <form method="get" class="filtros">
+      <input type="hidden" name="estado" value="{{ estado_actual }}">
+      <input type="text" name="etiqueta" placeholder="Filtrar por etiqueta..." value="{{ etiqueta_actual }}">
+      <select name="energia">
+        <option value="">Toda energía</option>
+        <option value="alta" {% if energia_actual == 'alta' %}selected{% endif %}>Alta</option>
+        <option value="media" {% if energia_actual == 'media' %}selected{% endif %}>Media</option>
+        <option value="baja" {% if energia_actual == 'baja' %}selected{% endif %}>Baja</option>
+      </select>
+      <button type="submit">Filtrar</button>
+    </form>
+
+    {% if ideas %}
+      {% for idea in ideas %}
+        <div class="idea-card">
+          <div class="idea-titulo">{{ idea.titulo }}</div>
+          <div class="idea-meta">
+            {{ idea.creado_en|date:"d M Y H:i" }} ·
+            Estado: <strong>{{ idea.get_estado_display }}</strong>
+            {% if idea.energia %} · Energía: {{ idea.get_energia_display }}{% endif %}
+          </div>
+          {% if idea.descripcion %}
+            <p style="margin: 8px 0; color: #34495e;">{{ idea.descripcion|truncatewords:40 }}</p>
+          {% endif %}
+          {% if idea.lista_etiquetas %}
+            <div class="etiquetas">
+              {% for et in idea.lista_etiquetas %}
+                <span>{{ et }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <div class="acciones" style="margin-top: 12px;">
+  {% if idea.estado == 'capturada' or idea.estado == 'procesando' %}
+    <a href="{% url 'procesar_idea' idea.id %}" class="btn-procesar">⚡ Procesar</a>
+  {% endif %}
+
+  <!-- Botones rápidos de estado -->
+  {% if idea.estado != 'procesando' %}
+    <form method="post" action="{% url 'cambiar_estado_idea' idea.id %}" style="display: inline;">
+      {% csrf_token %}
+      <input type="hidden" name="estado" value="procesando">
+      <button type="submit" style="background: none; border: none; color: #8e44ad; cursor: pointer; font-size: 0.95em;">
+        🔄 En proceso
+      </button>
+    </form>
+  {% endif %}
+
+  {% if idea.estado != 'archivada' %}
+    <form method="post" action="{% url 'cambiar_estado_idea' idea.id %}" style="display: inline;">
+      {% csrf_token %}
+      <input type="hidden" name="estado" value="archivada">
+      <button type="submit" style="background: none; border: none; color: #7f8c8d; cursor: pointer; font-size: 0.95em;">
+        📦 Archivar
+      </button>
+    </form>
+  {% endif %}
+
+  {% if idea.estado != 'descartada' %}
+    <form method="post" action="{% url 'cambiar_estado_idea' idea.id %}" style="display: inline;">
+      {% csrf_token %}
+      <input type="hidden" name="estado" value="descartada">
+      <button type="submit" style="background: none; border: none; color: #c0392b; cursor: pointer; font-size: 0.95em;">
+        🗑️ Descartar
+      </button>
+    </form>
+  {% endif %}
+
+  <a href="{% url 'editar_idea' idea.id %}" class="btn-editar">✏️ Editar</a>
+</div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="vacio">
+        <p>No hay ideas en este filtro.</p>
+        <p>¡Captura la próxima idea que se te ocurra!</p>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
