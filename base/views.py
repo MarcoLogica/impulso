@@ -1670,6 +1670,44 @@ def reordenar_tareas(request, fase_id):
 
     return JsonResponse({'status': 'error', 'mensaje': 'Método no permitido'}, status=405)
 
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Fase
+@csrf_exempt
+def reordenar_fases(request):
+
+    if request.method == 'POST':
+
+        try:
+            data = json.loads(request.body)
+
+            orden = data.get('orden', [])
+
+            for i, fase_id in enumerate(orden):
+
+                Fase.objects.filter(
+                    id=fase_id
+                ).update(
+                    orden=i
+                )
+
+            return JsonResponse({
+                'status': 'ok'
+            })
+
+        except Exception as e:
+
+            return JsonResponse({
+                'status': 'error',
+                'mensaje': str(e)
+            }, status=400)
+
+    return JsonResponse({
+        'status': 'error',
+        'mensaje': 'Método no permitido'
+    }, status=405)
+
 #/////////////////////// RPA //////////////////
 
 from django.utils import timezone

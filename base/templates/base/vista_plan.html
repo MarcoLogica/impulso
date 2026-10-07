@@ -384,6 +384,21 @@
     transform: scale(1.1);
     background: #219a52;
   }
+
+  .tarea-completada {
+  background-color: #d4edda !important;
+  border-left: 8px solid #28a745 !important;
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.35) !important;
+  color: #155724 !important;
+}
+  .fase-cabecera {
+    cursor: grab;
+}
+
+.fase-cabecera:active {
+    cursor: grabbing;
+}
+`
 </style>
 
 <a href="{% url 'crear_idea' %}" class="btn-flotante-idea" title="Capturar nueva idea">💡</a>
@@ -411,8 +426,14 @@
         </div>
       </div>
 
+<div id="lista-fases">
       {% for fase in fases %}
-  <div id="fase-{{ fase.id }}" class="fase" style="border-left-color: {{ fase.color_hex }};">
+ <div
+    id="fase-{{ fase.id }}"
+    class="fase"
+    data-id="{{ fase.id }}"
+    style="border-left-color: {{ fase.color_hex }};"
+>
           <div class="fase-cabecera">
             <h3 class="fase-nombre">
               <span class="fase-icono">{{ fase.icono }}</span>
@@ -429,8 +450,13 @@
          <!-- 🔃 Lista de tareas con drag & drop -->
 <ul id="lista-tareas-{{ fase.id }}" class="sortable-tareas" data-fase-id="{{ fase.id }}" style="list-style-type: none; padding-left: 0; margin-top: 10px;">
   {% for tarea in fase.tareas.all %}
-    <li class="tarea {% if tarea.retrasada %}tarea-retrasada{% endif %}" data-id="{{ tarea.id }}">
-
+    <li class="tarea
+    {% if tarea.estado == 'completada' %}
+        tarea-completada
+    {% elif tarea.retrasada %}
+        tarea-retrasada
+    {% endif %}"
+    data-id="{{ tarea.id }}">
       {% if tarea.estado != 'completada' %}
         <form method="post" action="{% url 'actualizar_estado_tarea' tarea.id %}" style="display: inline;">
           {% csrf_token %}
@@ -448,12 +474,15 @@
   {% empty %}
     <li style="margin-bottom: 10px; color: #666;">No hay tareas aún para esta fase.</li>
   {% endfor %}
+
 </ul>
 
           <!-- 🟡 Botón para crear tarea en esta fase -->
           <a href="{% url 'crear_tarea_en_fase' fase.id %}" class="boton-amarillo">📌 Nueva tarea para esta fase</a>
         </div>
       {% endfor %}
+</div>
+
     </div>
 
 
@@ -579,6 +608,51 @@ document.querySelectorAll('.sortable-tareas').forEach(lista => {
     }
   });
 });
+</script>
+
+  <script>
+
+Sortable.create(
+    document.getElementById('lista-fases'),
+    {
+
+        animation: 200,
+
+        handle: '.fase-cabecera',
+
+        onEnd: function () {
+
+            const orden = Array.from(
+                document.querySelectorAll('#lista-fases > .fase')
+            ).map(fase => fase.dataset.id);
+
+            fetch('/fases/reordenar/', {
+
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+
+                body: JSON.stringify({
+                    orden: orden
+                })
+
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fases reordenadas', data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        }
+
+    }
+);
+
 </script>
 
   </div>

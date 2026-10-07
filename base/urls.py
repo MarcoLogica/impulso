@@ -112,6 +112,11 @@ path("metricas/resumen-contactos/", resumen_contactos),
     path('fase/eliminar/<int:fase_id>/', views.eliminar_fase, name='eliminar_fase'),
     path('fase/<int:fase_id>/replicar/', views.replicar_fase, name='replicar_fase'),
     path('tareas/reordenar/<int:fase_id>/', views.reordenar_tareas, name='reordenar_tareas'),
+path(
+    'fases/reordenar/',
+    views.reordenar_fases,
+    name='reordenar_fases'
+),
 
 
 
